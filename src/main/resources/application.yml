@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: demo
+  datasource:
+    url: jdbc:mysql://localhost/casas
+    username: ${user}
+    password: ${password}
+  jpa:
+    hibernate:
+      ddl-auto: update
