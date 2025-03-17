@@ -7,16 +7,16 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "casa")
+@Table(name = "location")
 @NoArgsConstructor
 @AllArgsConstructor
-public class HomeEntity {
+public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
-    @ManyToOne
-    @JoinColumn(name = "id_category", nullable = false) // Esto crea la columna id_category como FK
-    private CategoryEntity category; // Relación directa a la entidad CategoryEntity
+    private String city;
+    private String cityDescription;
+    private String department;
+    private String departmentDescription;
 }

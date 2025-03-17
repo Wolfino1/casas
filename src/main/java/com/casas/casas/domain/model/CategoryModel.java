@@ -3,9 +3,10 @@ package com.casas.casas.domain.model;
 import com.casas.casas.domain.exceptions.DescriptionMaxSizeExceededException;
 import com.casas.casas.domain.exceptions.NameMaxSizeExceededException;
 import com.casas.casas.domain.utils.constants.DomainConstants;
+import lombok.Builder;
 
 import java.util.Objects;
-
+@Builder
 public class CategoryModel {
     private Long id;
     private String name;
