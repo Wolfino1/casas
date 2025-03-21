@@ -1,9 +1,6 @@
 package com.casas.casas.infrastructure.exceptionshandler;
 
-import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
-import com.casas.casas.domain.exceptions.DescriptionMaxSizeExceededException;
-import com.casas.casas.domain.exceptions.LocationAlreadyExistsException;
-import com.casas.casas.domain.exceptions.NameMaxSizeExceededException;
+import com.casas.casas.domain.exceptions.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,9 +26,21 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(new ExceptionResponse(ExceptionConstants.CATEGORY_EXISTS_EXCEPTION,
                 LocalDateTime.now()));
     }
+
     @ExceptionHandler(LocationAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleLocationAlreadyExistsException(LocationAlreadyExistsException exception) {
         return ResponseEntity.badRequest().body(new ExceptionResponse(ExceptionConstants.LOCATION_EXISTS_EXCEPTION,
+                LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(NullException.class)
+    public ResponseEntity<ExceptionResponse> handleNullException(NullException exception) {
+        return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(),
+                LocalDateTime.now()));
+    }
+    @ExceptionHandler(EmptyException.class)
+    public ResponseEntity<ExceptionResponse> handleEmptyException(EmptyException exception) {
+        return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(),
                 LocalDateTime.now()));
     }
 }

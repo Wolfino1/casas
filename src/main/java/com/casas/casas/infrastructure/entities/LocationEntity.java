@@ -1,5 +1,12 @@
 package com.casas.casas.infrastructure.entities;
 
+import com.casas.casas.domain.model.LocationModel;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import com.casas.casas.domain.model.LocationModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +26,15 @@ public class LocationEntity {
     private String cityDescription;
     private String department;
     private String departmentDescription;
+
+    public LocationModel toModel() {
+        return LocationModel.builder()
+                .id(this.id)
+                .name(this.name != null ? this.name : "")
+                .city(this.city != null ? this.city : "")
+                .cityDescription(this.cityDescription != null ? this.cityDescription : "")
+                .department(this.department != null ? this.department : "")
+                .departmentDescription(this.departmentDescription != null ? this.departmentDescription : "")
+                .build();
+    }
 }

@@ -4,8 +4,11 @@ import com.casas.casas.domain.exceptions.LocationAlreadyExistsException;
 import com.casas.casas.domain.model.LocationModel;
 import com.casas.casas.domain.ports.in.LocationServicePort;
 import com.casas.casas.domain.ports.out.LocationPersistencePort;
+import com.casas.casas.domain.utils.validations.LocationFilters;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LocationUseCase implements LocationServicePort {
     private final LocationPersistencePort locationPersistencePort;
@@ -16,19 +19,18 @@ public class LocationUseCase implements LocationServicePort {
 
     @Override
     public void save(LocationModel locationModel) {
-        LocationModel location = locationPersistencePort.getByDepartment(locationModel.getDepartment());
-        if (location != null) {
+        Optional<LocationModel> existingLocation = locationPersistencePort
+                .getByCityAndDepartment(locationModel.getCity(), locationModel.getDepartment());
+
+        if (existingLocation.isPresent()) {
             throw new LocationAlreadyExistsException();
         }
+
         locationPersistencePort.save(locationModel);
     }
 
     @Override
-    public List<LocationModel> get(Integer page, Integer size, boolean orderAsc) {
-        return locationPersistencePort.get(page, size, orderAsc);
-    }
-    @Override
-    public List<LocationModel> getFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
+    public Page<LocationModel> getFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
         return locationPersistencePort.getFilters(page, size, city, department, orderAsc);
     }
 }

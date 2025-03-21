@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
     Optional<LocationEntity> findByCity(String city);
+    Optional<LocationEntity> findByDepartment(String department);
+    Optional<LocationEntity> findByCityAndDepartment(String city, String department);
     Page<LocationEntity> findAll(Pageable pageable);
     Page<LocationEntity> findByCityContainingAndDepartmentContaining(String city, String department, Pageable pageable);
     Page<LocationEntity> findByCityContaining(String city, Pageable pageable);
     Page<LocationEntity> findByDepartmentContaining(String department, Pageable pageable);
-
-
 }

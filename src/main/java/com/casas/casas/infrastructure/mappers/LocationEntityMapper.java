@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface LocationEntityMapper {
     LocationEntity modelToEntity(LocationModel locationModel);
-    LocationModel entityToModel(LocationEntity locationEntity);
     List<LocationModel> entityListToModelList(List<LocationEntity> location);
+    LocationModel entityToModel(LocationEntity locationEntity);
 }
 

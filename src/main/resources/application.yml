@@ -1,7 +1,10 @@
 server:
   port: 8080
-
 spring:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
   application:
     name: demo
   datasource:

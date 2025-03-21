@@ -2,17 +2,19 @@ package com.casas.casas.infrastructure.adapters.persistence.mysql;
 
 import com.casas.casas.domain.model.LocationModel;
 import com.casas.casas.domain.ports.out.LocationPersistencePort;
+import com.casas.casas.infrastructure.entities.LocationEntity;
 import com.casas.casas.infrastructure.mappers.LocationEntityMapper;
 import com.casas.casas.infrastructure.repositories.mysql.LocationRepository;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,45 +29,36 @@ public class LocationPersistenceAdapter implements LocationPersistencePort {
     }
 
     @Override
-    public LocationModel getByDepartment(String locationDepartment) {
-        return locationEntityMapper.entityToModel(locationRepository.findByCity(locationDepartment).orElse(null));
+    public Optional<LocationModel> getByCityAndDepartment(String city, String department) {
+        return locationRepository.findByCityAndDepartment(city, department)
+                .map(LocationEntity::toModel);
     }
 
     @Override
-    public List<LocationModel> get(Integer page, Integer size, boolean orderAsc) {
-        Pageable pagination;
-        if (orderAsc) pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending());
-        else pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).descending());
-        return locationEntityMapper.entityListToModelList(locationRepository.findAll(pagination).getContent());
-    }
-
-    @Override
-    public List<LocationModel> getFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
+    public Page<LocationModel> getFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
         Pageable pagination = PageRequest.of(page, size,
-                orderAsc ? Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending() : Sort.by(Constants.PAGEABLE_FIELD_NAME).descending());
+                orderAsc ? Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending() : Sort.by(Constants.PAGEABLE_FIELD_NAME)
+                        .descending());
 
         if (city != null && !city.trim().isEmpty() && department != null && !department.trim().isEmpty()) {
-            return locationEntityMapper.entityListToModelList(
-                    locationRepository.findByCityContainingAndDepartmentContaining(city, department, pagination).getContent()
-            );
+            return locationRepository.findByCityContainingAndDepartmentContaining(city, department, pagination)
+                    .map(locationEntityMapper::entityToModel);
         }
 
         if (city != null && !city.trim().isEmpty()) {
-            return locationEntityMapper.entityListToModelList(
-                    locationRepository.findByCityContaining(city, pagination).getContent()
-            );
+            return locationRepository.findByCityContaining(city, pagination)
+                    .map(locationEntityMapper::entityToModel);
         }
 
         if (department != null && !department.trim().isEmpty()) {
-            return locationEntityMapper.entityListToModelList(
-                    locationRepository.findByDepartmentContaining(department, pagination).getContent()
-            );
+            return locationRepository.findByDepartmentContaining(department, pagination)
+                    .map(locationEntityMapper::entityToModel);
         }
 
-        return locationEntityMapper.entityListToModelList(
-                locationRepository.findAll(pagination).getContent()
-        );
+        return locationRepository.findAll(pagination)
+                .map(locationEntityMapper::entityToModel);
     }
-}
+} // Hacer esta validación en el dominio
+
 
 

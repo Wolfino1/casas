@@ -8,10 +8,10 @@ import com.casas.casas.application.services.CategoryService;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +26,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getCategories(Integer page, Integer size, boolean orderAsc) {
-        return categoryDtoMapper.modelListToResponseList(categoryServicePort.get(page, size, orderAsc));
+    public Page<CategoryResponse> getCategories(Integer page, Integer size, boolean orderAsc) {
+        return categoryServicePort.get(page, size, orderAsc).map(categoryDtoMapper::modelToResponse);
     }
-    @Override
-    public List<CategoryResponse> getAllCategoriesFilters(Integer page, Integer size, String name, String description, boolean orderAsc) {
-        return categoryDtoMapper.modelListToResponseList(categoryServicePort.getFilters(page, size, name, description, orderAsc));
-    }
+
 }

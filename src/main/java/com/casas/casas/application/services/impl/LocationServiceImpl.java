@@ -8,6 +8,7 @@ import com.casas.casas.application.services.LocationService;
 import com.casas.casas.domain.ports.in.LocationServicePort;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,13 +27,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<LocationResponse> getLocations(Integer page, Integer size, boolean orderAsc) {
-        return locationDtoMapper.modelListToResponseList(locationServicePort.get(page, size, orderAsc));
-    }
-
-    @Override
-    public List<LocationResponse> getAllLocationsFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
-        return locationDtoMapper.modelListToResponseList(locationServicePort.getFilters(page, size, city, department, orderAsc));
+    public Page<LocationResponse> getAllLocationsFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
+        return locationServicePort.getFilters(page, size, city, department, orderAsc).map(locationDtoMapper::modelToResponse);
     }
 }
 
