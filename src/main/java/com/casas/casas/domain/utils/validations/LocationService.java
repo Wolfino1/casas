@@ -1,11 +1,24 @@
 package com.casas.casas.domain.utils.validations;
 
+import com.casas.casas.domain.model.LocationModel;
+import com.casas.casas.domain.ports.out.LocationPersistencePort;
+import com.casas.casas.domain.utils.page.PagedResult;
+
 public class LocationService {
+    private final LocationPersistencePort locationPersistencePort;
 
-    public LocationFilters validateFilters(String city, String department) {
-        String validCity = (city != null && !city.trim().isEmpty()) ? city.trim() : null;
-        String validDepartment = (department != null && !department.trim().isEmpty()) ? department.trim() : null;
+    public LocationService(LocationPersistencePort locationPersistencePort) {
+        this.locationPersistencePort = locationPersistencePort;
+    }
 
-        return new LocationFilters(validCity, validDepartment);
+    public PagedResult<LocationModel> getFilteredLocations(Integer page, Integer size, String city, String department, boolean orderAsc) {
+        validateFilters(city, department);
+        return locationPersistencePort.getFilters(page, size, city, department, orderAsc);
+    }
+
+    private void validateFilters(String city, String department) {
+        if ((city != null && city.trim().isEmpty()) || (department != null && department.trim().isEmpty())) {
+            throw new IllegalArgumentException("City and department cannot be empty");
+        }
     }
 }

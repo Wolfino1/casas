@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     Optional<CategoryEntity> findByName(String name);
     Page<CategoryEntity> findAll(Pageable pageable);
-    Page<CategoryEntity> findByDescriptionContaining(String description, Pageable pageable);
 }

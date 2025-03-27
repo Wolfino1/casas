@@ -54,19 +54,19 @@ class CategoryAdapterTest {
         when(categoryRepository.findByName("Anime")).thenReturn(Optional.of(categoryEntity));
         when(categoryEntityMapper.entityToModel(categoryEntity)).thenReturn(categoryModel);
 
-        CategoryModel result = categoryPersistenceAdapter.getByName("Anime");
+        Optional<CategoryModel> result = categoryPersistenceAdapter.getByName("Anime");
 
-        assertNotNull(result);
-        assertEquals("Anime", result.getName());
+        assertTrue(result.isPresent());
+        assertEquals("Anime", result.get().getName());
     }
 
     @Test
-    void getByName_ShouldReturnNull_WhenNotExists() {
+    void getByName_ShouldReturnEmptyOptional_WhenNotExists() {
         when(categoryRepository.findByName("Anime")).thenReturn(Optional.empty());
 
-        CategoryModel result = categoryPersistenceAdapter.getByName("Anime");
+        Optional<CategoryModel> result = categoryPersistenceAdapter.getByName("Anime");
 
-        assertNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test

@@ -15,5 +15,4 @@ import java.util.List;
 public interface LocationDtoMapper {
     LocationModel requestToModel(SaveLocationRequest saveLocationRequest);
     LocationResponse modelToResponse(LocationModel locationModel);
-    List<LocationResponse> modelListToResponseList(List<LocationModel> locations);
 }

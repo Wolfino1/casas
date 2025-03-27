@@ -2,9 +2,8 @@ package com.casas.casas.domain.utils.page;
 
 import java.util.List;
 
-public class Pagination {
-
     public class PagedResult<T> {
+
         private final List<T> content;
         private final int page;
         private final int size;
@@ -39,4 +38,4 @@ public class Pagination {
             return totalPages;
         }
     }
-}
+

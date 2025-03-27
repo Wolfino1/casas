@@ -1,5 +1,6 @@
 package com.casas.common.configurations.beans;
 
+
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.in.LocationServicePort;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
@@ -10,6 +11,7 @@ import com.casas.casas.infrastructure.adapters.persistence.mysql.CategoryPersist
 import com.casas.casas.infrastructure.adapters.persistence.mysql.LocationPersistenceAdapter;
 import com.casas.casas.infrastructure.mappers.CategoryEntityMapper;
 import com.casas.casas.infrastructure.mappers.LocationEntityMapper;
+import com.casas.casas.infrastructure.mappers.PageMapperInfra;
 import com.casas.casas.infrastructure.repositories.mysql.CategoryRepository;
 import com.casas.casas.infrastructure.repositories.mysql.LocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class BeanConfiguration {
     private final CategoryEntityMapper categoryEntityMapper;
     private final LocationRepository locationRepository;
     private final LocationEntityMapper locationEntityMapper;
-
+    private final PageMapperInfra pageMapperInfra;
 
     @Bean
     public CategoryServicePort categoryServicePort() {
@@ -32,7 +34,7 @@ public class BeanConfiguration {
 
     @Bean
     public CategoryPersistencePort categoryPersistencePort() {
-        return new CategoryPersistenceAdapter(categoryRepository, categoryEntityMapper);
+        return new CategoryPersistenceAdapter(categoryRepository, categoryEntityMapper, pageMapperInfra);
     }
     @Bean
     public LocationServicePort locationServicePort() {
@@ -41,7 +43,8 @@ public class BeanConfiguration {
 
     @Bean
     public LocationPersistencePort locationPersistencePort() {
-        return new LocationPersistenceAdapter(locationRepository, locationEntityMapper);
+        return new LocationPersistenceAdapter(locationRepository, locationEntityMapper, pageMapperInfra);
     }
+
 }
 

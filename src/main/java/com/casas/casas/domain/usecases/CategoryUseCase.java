@@ -4,7 +4,7 @@ import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
-import org.springframework.data.domain.Page;
+import com.casas.casas.domain.utils.page.PagedResult;
 
 import java.util.Optional;
 
@@ -27,7 +27,7 @@ public class CategoryUseCase implements CategoryServicePort {
 
 
     @Override
-    public Page<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
+    public PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
         return categoryPersistencePort.get(page, size, orderAsc);
     }
 

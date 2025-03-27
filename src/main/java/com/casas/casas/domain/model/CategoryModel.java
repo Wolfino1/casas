@@ -1,7 +1,9 @@
 package com.casas.casas.domain.model;
 
 import com.casas.casas.domain.exceptions.DescriptionMaxSizeExceededException;
+import com.casas.casas.domain.exceptions.EmptyException;
 import com.casas.casas.domain.exceptions.NameMaxSizeExceededException;
+import com.casas.casas.domain.exceptions.NullException;
 import com.casas.casas.domain.utils.constants.DomainConstants;
 import lombok.Builder;
 
@@ -11,14 +13,16 @@ public class CategoryModel {
     private Long id;
     private String name;
     private String description;
+    private static final String NAME = "Name";
+    private static final String DESCRIPTION = "Description";
+
+
 
     public CategoryModel(Long id, String name, String description) {
 
-        if (name.length() > 50) throw new NameMaxSizeExceededException();
-        if (description.length() > 90) throw new DescriptionMaxSizeExceededException();
         this.id = id;
-        this.name = Objects.requireNonNull(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
-        this.description = Objects.requireNonNull(description,  DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
+        setName(name);
+        setDescription(description);
     }
 
     public Long getId() {
@@ -34,8 +38,12 @@ public class CategoryModel {
     }
 
     public void setName(String name) {
-        if (name.length() > 50) throw new NameMaxSizeExceededException();
-        this.name = Objects.requireNonNull(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
+        if (name != null) {
+            if (name.trim().isEmpty()) throw new EmptyException(NAME);
+            if (name.length() > 50) throw new NameMaxSizeExceededException();
+            this.name = Objects.requireNonNull(name, DomainConstants.FIELD_NAME_NULL_MESSAGE);
+        }
+        else throw new NullException("Name");
     }
 
     public String getDescription() {
@@ -43,7 +51,10 @@ public class CategoryModel {
     }
 
     public void setDescription(String description) {
-        if (description.length() > 90) throw new DescriptionMaxSizeExceededException();
-        this.description = Objects.requireNonNull(description,  DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
+        if (description != null) {
+            if (description.trim().isEmpty()) throw new EmptyException(DESCRIPTION);
+            if (description.length() > 90) throw new DescriptionMaxSizeExceededException();
+            this.description = Objects.requireNonNull(description, DomainConstants.FIELD_DESCRIPTION_NULL_MESSAGE);
+        }
     }
 }

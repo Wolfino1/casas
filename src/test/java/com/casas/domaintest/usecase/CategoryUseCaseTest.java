@@ -38,7 +38,7 @@ class CategoryUseCaseTest {
 
     @Test
     void save_ShouldSaveCategory_WhenCategoryDoesNotExist() {
-        when(categoryPersistencePort.getByName(category.getName())).thenReturn(null);
+        when(categoryPersistencePort.getByName(category.getName())).thenReturn(Optional.empty()); // Cambio aquí
 
         categoryUseCase.save(category);
 
@@ -56,7 +56,6 @@ class CategoryUseCaseTest {
     void get_ShouldReturnPagedCategories() {
         Page<CategoryModel> page = new PageImpl<>(List.of(category));
         when(categoryPersistencePort.get(anyInt(), anyInt(), anyBoolean())).thenReturn(page);
-
         Page<CategoryModel> result = categoryUseCase.get(0, 10, true);
 
         assertNotNull(result);

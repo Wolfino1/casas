@@ -4,13 +4,13 @@ import com.casas.casas.application.dto.request.SaveCategoryRequest;
 import com.casas.casas.application.dto.response.CategoryResponse;
 import com.casas.casas.application.dto.response.SaveCategoryResponse;
 import com.casas.casas.application.services.CategoryService;
+import com.casas.casas.domain.utils.page.PagedResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +37,8 @@ public class CategoryController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<Page<CategoryResponse>> getAllCategories(@RequestParam Integer page, @RequestParam Integer size,
-                                                                   @RequestParam boolean orderAsc) {
+    public ResponseEntity<PagedResult<CategoryResponse>> getAllCategories(@RequestParam Integer page, @RequestParam Integer size,
+                                                                          @RequestParam boolean orderAsc) {
         return ResponseEntity.ok(categoryService.getCategories(page, size, orderAsc));
     }
 

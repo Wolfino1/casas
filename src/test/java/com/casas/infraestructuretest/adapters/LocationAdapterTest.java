@@ -59,13 +59,15 @@ class LocationPersistenceAdapterTest {
         when(locationRepository.findByCityAndDepartment(anyString(), anyString()))
                 .thenReturn(Optional.of(locationEntity));
 
+        when(locationEntityMapper.entityToModel(locationEntity)) // Simulación del mapper
+                .thenReturn(locationModel);
+
         Optional<LocationModel> result = locationPersistenceAdapter.getByCityAndDepartment("Bucaramanga", "Santander");
 
         assertTrue(result.isPresent());
         assertEquals("Bucaramanga", result.get().getCity());
         assertEquals("Santander", result.get().getDepartment());
     }
-
 
     @Test
     void getByCityAndDepartment_ShouldReturnEmpty_WhenNotExists() {
