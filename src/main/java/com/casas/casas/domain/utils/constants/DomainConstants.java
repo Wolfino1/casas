@@ -10,4 +10,6 @@ public final class DomainConstants {
      */
     public static final String FIELD_NAME_NULL_MESSAGE = "El campo 'nombre' no puede estar vacío";
     public static final String FIELD_DESCRIPTION_NULL_MESSAGE = "El campo 'descripción' no puede estar vacío";
+    public static final String FIELD_CITY_NULL_MESSAGE = "El campo 'ciudad' no puede estar vacío";
+    public static final String FIELD_DEPARTMENT_NULL_MESSAGE = "El campo 'departamento' no puede estar vacío";
 }

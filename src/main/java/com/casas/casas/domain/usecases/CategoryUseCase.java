@@ -4,8 +4,10 @@ import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
+import com.casas.casas.domain.utils.page.PagedResult;
 
-import java.util.List;
+import java.util.Optional;
+
 
 public class CategoryUseCase implements CategoryServicePort {
     private final CategoryPersistencePort categoryPersistencePort;
@@ -16,19 +18,18 @@ public class CategoryUseCase implements CategoryServicePort {
 
     @Override
     public void save(CategoryModel categoryModel) {
-        CategoryModel category = categoryPersistencePort.getByName(categoryModel.getName());
-        if (category != null) {
+        Optional<CategoryModel> category = categoryPersistencePort.getByName(categoryModel.getName());
+        if (category.isPresent()) {
             throw new CategoryAlreadyExistsException();
         }
         categoryPersistencePort.save(categoryModel);
     }
 
+
     @Override
-    public List<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
+    public PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
         return categoryPersistencePort.get(page, size, orderAsc);
     }
-    @Override
-    public List<CategoryModel> getFilters(Integer page, Integer size, String name, String description, boolean orderAsc) {
-        return categoryPersistencePort.getFilters(page, size, name, description, orderAsc);
-    }
+
 }
+

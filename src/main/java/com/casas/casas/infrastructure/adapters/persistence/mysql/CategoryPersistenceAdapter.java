@@ -2,17 +2,17 @@ package com.casas.casas.infrastructure.adapters.persistence.mysql;
 
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
+import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.casas.infrastructure.mappers.CategoryEntityMapper;
+import com.casas.casas.infrastructure.mappers.PageMapperInfra;
 import com.casas.casas.infrastructure.repositories.mysql.CategoryRepository;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,6 +20,7 @@ import java.util.List;
 public class CategoryPersistenceAdapter implements CategoryPersistencePort {
     private final CategoryRepository categoryRepository;
     private final CategoryEntityMapper categoryEntityMapper;
+    private final PageMapperInfra pageMapperInfra;
 
     @Override
     public void save(CategoryModel categoryModel) {
@@ -27,30 +28,17 @@ public class CategoryPersistenceAdapter implements CategoryPersistencePort {
     }
 
     @Override
-    public CategoryModel getByName(String categoryName) {
-        return categoryEntityMapper.entityToModel(categoryRepository.findByName(categoryName).orElse(null));
+    public Optional<CategoryModel> getByName(String categoryName) {
+        return categoryRepository.findByName(categoryName)
+                .map(categoryEntityMapper::entityToModel);
     }
 
-    @Override
-    public List<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
-        Pageable pagination;
-        if (orderAsc) pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending());
-        else pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).descending());
-        return categoryEntityMapper.entityListToModelList(categoryRepository.findAll(pagination).getContent());
-    }
-    @Override
-    public List<CategoryModel> getFilters(Integer page, Integer size, String name, String description, boolean orderAsc) {
-        if (name != null) {
-            return List.of(categoryEntityMapper.entityToModel(categoryRepository.findByName(name).orElse(null)));
-        } else if (description != null) {
+        @Override
+        public PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
             Pageable pagination;
             if (orderAsc) pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending());
             else pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).descending());
-            return categoryEntityMapper.entityListToModelList(categoryRepository.findByDescriptionContaining(description, pagination)
-                    .getContent());
-        } else {
-            return get(page, size, orderAsc);
-        }
+            return pageMapperInfra.fromPage(categoryRepository.findAll(pagination).map(categoryEntityMapper::entityToModel));
     }
 }
 
