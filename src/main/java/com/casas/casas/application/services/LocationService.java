@@ -7,6 +7,5 @@ import com.casas.casas.domain.utils.page.PagedResult;
 
 public interface LocationService {
     SaveLocationResponse save(SaveLocationRequest request);
-    PagedResult<LocationResponse> getAllLocationsFilters(Integer page, Integer size, String city, String department, boolean orderAsc);
-
+    PagedResult<LocationResponse> getAllLocationsFilters(Integer page, Integer size, Long idCity, boolean orderAsc);
 }

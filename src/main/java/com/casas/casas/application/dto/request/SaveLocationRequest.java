@@ -1,5 +1,5 @@
 package com.casas.casas.application.dto.request;
 
-public record SaveLocationRequest(String name, String city, String cityDescription, String department, String departmentDescription) {
+public record SaveLocationRequest(String name, Long idCity, String nameCity) {
 }
 

@@ -5,5 +5,5 @@ import com.casas.casas.domain.utils.page.PagedResult;
 
 public interface LocationServicePort {
     void save(LocationModel locationModel);
-    PagedResult<LocationModel> getFilters(Integer page, Integer size, String city, String department, boolean orderAsc);
+    PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, boolean orderAsc);
 }

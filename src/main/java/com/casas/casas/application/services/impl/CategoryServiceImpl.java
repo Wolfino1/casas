@@ -36,5 +36,4 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
         return pageMapper.fromPage(content, categoryModelPagedResult);
     }
-
 }

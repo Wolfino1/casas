@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/locations")
 @RequiredArgsConstructor
@@ -42,9 +40,8 @@ public class LocationController {
     @GetMapping("/filters")
     public ResponseEntity<PagedResult<LocationResponse>> getAllLocationsFilters(@RequestParam Integer page,
                                                                                 @RequestParam Integer size,
-                                                                                @RequestParam(required = false) String city,
-                                                                                @RequestParam(required = false) String department,
+                                                                                @RequestParam(required = false) Long idCity,
                                                                                 @RequestParam boolean orderAsc) {
-        return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, city, department, orderAsc));
+        return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, idCity, orderAsc));
     }
 }

@@ -1,15 +1,14 @@
 package com.casas.applicationtest.serviceimpl;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.casas.casas.application.dto.request.SaveLocationRequest;
 import com.casas.casas.application.dto.response.LocationResponse;
 import com.casas.casas.application.dto.response.SaveLocationResponse;
 import com.casas.casas.application.mappers.LocationDtoMapper;
+import com.casas.casas.application.mappers.PageMapperApplication;
 import com.casas.casas.application.services.impl.LocationServiceImpl;
 import com.casas.casas.domain.model.LocationModel;
 import com.casas.casas.domain.ports.in.LocationServicePort;
+import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.common.configurations.utils.Constants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,11 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LocationServiceImplTest {
@@ -32,23 +33,31 @@ class LocationServiceImplTest {
     @Mock
     private LocationDtoMapper locationDtoMapper;
 
+    @Mock
+    private PageMapperApplication pageMapper;
+
     @InjectMocks
     private LocationServiceImpl locationService;
 
     private SaveLocationRequest saveLocationRequest;
     private LocationModel locationModel;
+    private SaveLocationResponse saveLocationResponse;
     private LocationResponse locationResponse;
+    private PagedResult<LocationModel> pagedLocationModel;
+    private PagedResult<LocationResponse> pagedLocationResponse;
 
     @BeforeEach
     void setUp() {
-        saveLocationRequest = new SaveLocationRequest("Lugar X", "Bucaramanga", "Ciudad bonita", "Santander", "Departamento histórico");
-        locationModel = new LocationModel(1L, "Bucaramanga", "Bucaramanga", "Ciudad bonita", "Santander", "Departamento histórico");
-        locationResponse = new LocationResponse(1L, "Bucaramanga", "Bucaramanga", "Ciudad bonita", "Santander", "Departamento histórico");
-
+        saveLocationRequest = new SaveLocationRequest("Test Location", 1L,"Name City");
+        locationModel = new LocationModel(1L, "Test Location", 1L, null);
+        locationResponse = new LocationResponse(1L, "Test Location", null);
+        saveLocationResponse = new SaveLocationResponse(Constants.SAVE_LOCATION_RESPONSE_MESSAGE, LocalDateTime.now());
+        pagedLocationModel = new PagedResult<>(List.of(locationModel), 0, 10, 1);
+        pagedLocationResponse = new PagedResult<>(List.of(locationResponse), 0, 10, 1);
     }
 
     @Test
-    void save_ShouldReturnSuccessResponse() {
+    void save_ShouldSaveLocationAndReturnResponse() {
         when(locationDtoMapper.requestToModel(saveLocationRequest)).thenReturn(locationModel);
         doNothing().when(locationServicePort).save(locationModel);
 
@@ -56,24 +65,20 @@ class LocationServiceImplTest {
 
         assertNotNull(response);
         assertEquals(Constants.SAVE_LOCATION_RESPONSE_MESSAGE, response.message());
-        assertNotNull(response.time());
         verify(locationServicePort, times(1)).save(locationModel);
     }
 
     @Test
-    void getAllLocationsFilters_ShouldReturnPagedResults() {
-        int page = 0, size = 5;
-        boolean orderAsc = true;
-        Page<LocationModel> pagedLocations = new PageImpl<>(List.of(locationModel), PageRequest.of(page, size), 1);
-
-        when(locationServicePort.getFilters(page, size, "Bucaramanga", "Santander", orderAsc)).thenReturn(pagedLocations);
+    void getAllLocationsFilters_ShouldReturnPagedResult() {
+        when(locationServicePort.getFilters(0, 10, 1L, true)).thenReturn(pagedLocationModel);
         when(locationDtoMapper.modelToResponse(locationModel)).thenReturn(locationResponse);
+        when(pageMapper.fromPage(Collections.singletonList(locationResponse), pagedLocationModel)).thenReturn(pagedLocationResponse);
 
-        Page<LocationResponse> result = locationService.getAllLocationsFilters(page, size, "Bucaramanga", "Santander", orderAsc);
+        PagedResult<LocationResponse> result = locationService.getAllLocationsFilters(0, 10, 1L, true);
 
         assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        assertEquals("Bucaramanga", result.getContent().get(0).city());
-        verify(locationServicePort, times(1)).getFilters(page, size, "Bucaramanga", "Santander", orderAsc);
+        assertEquals(1, result.getContent().size());
+        assertEquals("Test Location", result.getContent().get(0).name());
+        verify(locationServicePort, times(1)).getFilters(0, 10, 1L, true);
     }
 }

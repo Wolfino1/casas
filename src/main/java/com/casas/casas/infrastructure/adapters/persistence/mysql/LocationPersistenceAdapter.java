@@ -16,8 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,17 +27,11 @@ public class LocationPersistenceAdapter implements LocationPersistencePort {
 
     @Override
     public void save(LocationModel locationModel) {
-        locationRepository.save(locationEntityMapper.modelToEntity(locationModel));
+        locationRepository.save(locationEntityMapper.toEntity(locationModel,locationModel.getCity()));
     }
 
     @Override
-    public Optional<LocationModel> getByCityAndDepartment(String city, String department) {
-        return locationRepository.findByCityAndDepartment(city, department)
-                .map(locationEntityMapper::entityToModel);
-    }
-
-    @Override
-    public PagedResult<LocationModel> getFilters(Integer page, Integer size, String city, String department, boolean orderAsc) {
+    public PagedResult<LocationModel> getFilters(Integer page, Integer size,Long idCity, boolean orderAsc) {
         Pageable pagination;
         if (orderAsc) {
             pagination = PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending());
@@ -49,19 +41,11 @@ public class LocationPersistenceAdapter implements LocationPersistencePort {
 
         Page<LocationEntity> pageResult;
 
-        if (city != null && department != null) {
-            pageResult = locationRepository.findByCityContainingAndDepartmentContaining(city, department, pagination);
-        } else if (city != null) {
-            pageResult = locationRepository.findByCityContaining(city, pagination);
-        } else if (department != null) {
-            pageResult = locationRepository.findByDepartmentContaining(department, pagination);
+        if (idCity != null) {
+      pageResult = locationRepository.findByCityId(idCity, pagination);
         } else {
             pageResult = locationRepository.findAll(pagination);
         }
         return pageMapperInfra.fromPage(pageResult.map(locationEntityMapper::entityToModel));
     }
-
 }
-
-
-

@@ -11,9 +11,8 @@ public class LocationService {
         this.locationPersistencePort = locationPersistencePort;
     }
 
-    public PagedResult<LocationModel> getFilteredLocations(Integer page, Integer size, String city, String department, boolean orderAsc) {
-        validateFilters(city, department);
-        return locationPersistencePort.getFilters(page, size, city, department, orderAsc);
+    public PagedResult<LocationModel> getFilteredLocations(Integer page, Integer size,Long idCity, boolean orderAsc) {
+        return locationPersistencePort.getFilters(page, size, idCity, orderAsc);
     }
 
     private void validateFilters(String city, String department) {

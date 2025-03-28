@@ -5,14 +5,13 @@ import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
 import com.casas.casas.domain.usecases.CategoryUseCase;
+import com.casas.casas.domain.utils.page.PagedResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +53,16 @@ class CategoryUseCaseTest {
 
     @Test
     void get_ShouldReturnPagedCategories() {
-        Page<CategoryModel> page = new PageImpl<>(List.of(category));
-        when(categoryPersistencePort.get(anyInt(), anyInt(), anyBoolean())).thenReturn(page);
-        Page<CategoryModel> result = categoryUseCase.get(0, 10, true);
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+        CategoryModel category = new CategoryModel(1L, "Category Name", "Description");
+        PagedResult<CategoryModel> pagedResult = new PagedResult<>(List.of(category), 1, 0, 10);
+
+        when(categoryPersistencePort.get(anyInt(), anyInt(), anyBoolean())).thenReturn(pagedResult);
+
+        PagedResult<CategoryModel> result = categoryUseCase.get(0, 10, true);
+
+        assertFalse(result.getContent().isEmpty());
         assertEquals(1, result.getContent().size());
-        verify(categoryPersistencePort, times(1)).get(0, 10, true);
+        assertEquals(category.getId(), result.getContent().get(0).getId());
     }
 }

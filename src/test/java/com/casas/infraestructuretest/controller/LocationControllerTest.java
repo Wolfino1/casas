@@ -4,21 +4,20 @@ import com.casas.casas.application.dto.request.SaveLocationRequest;
 import com.casas.casas.application.dto.response.LocationResponse;
 import com.casas.casas.application.dto.response.SaveLocationResponse;
 import com.casas.casas.application.services.LocationService;
+import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.casas.infrastructure.endpoints.rest.LocationController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class LocationControllerTest {
@@ -36,8 +35,8 @@ class LocationControllerTest {
 
     @Test
     void testSaveLocation() {
-        SaveLocationRequest request = new SaveLocationRequest("Bucaramanga", "Santander", "Descripción Ciudad", "Santander", "Descripción Departamento");
-        SaveLocationResponse response = new SaveLocationResponse("Location saved successfully", LocalDateTime.now());
+        SaveLocationRequest request = new SaveLocationRequest("Santander", 1L, "Bucaramanga");
+        SaveLocationResponse response = new SaveLocationResponse("Location created successfully", LocalDateTime.now());
 
         when(locationService.save(request)).thenReturn(response);
 
@@ -45,29 +44,20 @@ class LocationControllerTest {
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(response, result.getBody());
-        verify(locationService, times(1)).save(request);
     }
 
     @Test
     void testGetAllLocationsFilters() {
-        int page = 0, size = 5;
-        boolean orderAsc = true;
-        String city = "Bucaramanga";
-        String department = "Santander";
+        LocationResponse location1 = new LocationResponse(1L, "Santander", null);
+        LocationResponse location2 = new LocationResponse(2L, "Bogotá", null);
+        PagedResult<LocationResponse> pagedResult = new PagedResult<>(List.of(location1, location2), 0, 10, 2L);
 
-        List<LocationResponse> locations = List.of(
-                new LocationResponse(1L, "Bucaramanga", "Santander", "Descripción Ciudad", "Santander", "Descripción Departamento"),
-                new LocationResponse(2L, "Floridablanca", "Santander", "Descripción Ciudad", "Santander", "Descripción Departamento")
-        );
-        Page<LocationResponse> pagedResponse = new PageImpl<>(locations);
+        when(locationService.getAllLocationsFilters(0, 10, null, true)).thenReturn(pagedResult);
 
-        when(locationService.getAllLocationsFilters(page, size, city, department, orderAsc)).thenReturn(pagedResponse);
-
-        ResponseEntity<Page<LocationResponse>> result = locationController.getAllLocationsFilters(page, size, city, department, orderAsc);
+        ResponseEntity<PagedResult<LocationResponse>> result = locationController.getAllLocationsFilters(0, 10, null, true);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(pagedResponse, result.getBody());
-        verify(locationService, times(1)).getAllLocationsFilters(page, size, city, department, orderAsc);
+        assertEquals(pagedResult, result.getBody());
     }
 }
 

@@ -4,6 +4,7 @@ import com.casas.casas.application.dto.request.SaveCategoryRequest;
 import com.casas.casas.application.dto.response.CategoryResponse;
 import com.casas.casas.application.dto.response.SaveCategoryResponse;
 import com.casas.casas.application.services.CategoryService;
+import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.casas.infrastructure.endpoints.rest.CategoryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,13 +51,14 @@ class CategoryControllerTest {
     void testGetAllCategories() {
         CategoryResponse category1 = new CategoryResponse(1L, "Anime", "Figuras de anime");
         CategoryResponse category2 = new CategoryResponse(2L, "Películas", "Figuras de películas");
-        Page<CategoryResponse> pageResponse = new PageImpl<>(List.of(category1, category2));
+        PagedResult<CategoryResponse> pagedResult = new PagedResult<>(List.of(category1, category2), 0, 10, 2);
 
-        when(categoryService.getCategories(0, 10, true)).thenReturn(pageResponse);
+        when(categoryService.getCategories(0, 10, true)).thenReturn(pagedResult);
 
-        ResponseEntity<Page<CategoryResponse>> result = categoryController.getAllCategories(0, 10, true);
+        ResponseEntity<PagedResult<CategoryResponse>> result = categoryController.getAllCategories(0, 10, true);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(pageResponse, result.getBody());
+        assertEquals(pagedResult, result.getBody());
     }
+
 }

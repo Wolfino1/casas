@@ -7,17 +7,18 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "location")
+@Table(name = "city")
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationEntity {
+public class    CityEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String description;
 
-    @ManyToOne(targetEntity = CityEntity.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id")
-    private CityEntity city;
+    @ManyToOne(targetEntity = DepartmentEntity.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private DepartmentEntity department;
 }

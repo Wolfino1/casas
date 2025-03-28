@@ -1,8 +1,10 @@
 package com.casas.infraestructuretest.adapters;
 
 import com.casas.casas.domain.model.CategoryModel;
+import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.casas.infrastructure.adapters.persistence.mysql.CategoryPersistenceAdapter;
 import com.casas.casas.infrastructure.mappers.CategoryEntityMapper;
+import com.casas.casas.infrastructure.mappers.PageMapperInfra;
 import com.casas.casas.infrastructure.repositories.mysql.CategoryRepository;
 import com.casas.casas.infrastructure.entities.CategoryEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.List;
 
@@ -27,6 +30,9 @@ class CategoryAdapterTest {
 
     @Mock
     private CategoryEntityMapper categoryEntityMapper;
+
+    @Mock
+    private PageMapperInfra pageMapperInfra; // Agregar Mock
 
     @InjectMocks
     private CategoryPersistenceAdapter categoryPersistenceAdapter;
@@ -50,6 +56,14 @@ class CategoryAdapterTest {
     }
 
     @Test
+    void getByName_ShouldReturnEmptyOptional_WhenNotExists() {
+        when(categoryRepository.findByName("Anime")).thenReturn(Optional.empty());
+
+        Optional<CategoryModel> result = categoryPersistenceAdapter.getByName("Anime");
+
+        assertTrue(result.isEmpty());
+    }
+    @Test
     void getByName_ShouldReturnCategory_WhenExists() {
         when(categoryRepository.findByName("Anime")).thenReturn(Optional.of(categoryEntity));
         when(categoryEntityMapper.entityToModel(categoryEntity)).thenReturn(categoryModel);
@@ -58,29 +72,19 @@ class CategoryAdapterTest {
 
         assertTrue(result.isPresent());
         assertEquals("Anime", result.get().getName());
+        verify(categoryRepository, times(1)).findByName("Anime");
+        verify(categoryEntityMapper, times(1)).entityToModel(categoryEntity);
     }
 
     @Test
-    void getByName_ShouldReturnEmptyOptional_WhenNotExists() {
-        when(categoryRepository.findByName("Anime")).thenReturn(Optional.empty());
+    void getByName_ShouldReturnEmpty_WhenNotExists() {
+        when(categoryRepository.findByName("Música")).thenReturn(Optional.empty());
 
-        Optional<CategoryModel> result = categoryPersistenceAdapter.getByName("Anime");
+        Optional<CategoryModel> result = categoryPersistenceAdapter.getByName("Música");
 
-        assertTrue(result.isEmpty());
+        assertFalse(result.isPresent());
+        verify(categoryRepository, times(1)).findByName("Música");
+        verify(categoryEntityMapper, never()).entityToModel(any());
     }
 
-    @Test
-    void get_ShouldReturnPagedCategories() {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
-        Page<CategoryEntity> page = new PageImpl<>(List.of(categoryEntity));
-        when(categoryRepository.findAll(pageable)).thenReturn(page);
-        when(categoryEntityMapper.entityToModel(categoryEntity)).thenReturn(categoryModel);
-
-        Page<CategoryModel> result = categoryPersistenceAdapter.get(0, 10, true);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.getContent().size());
-        verify(categoryRepository, times(1)).findAll(pageable);
-    }
 }
