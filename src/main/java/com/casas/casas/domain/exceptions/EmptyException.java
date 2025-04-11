@@ -2,6 +2,6 @@ package com.casas.casas.domain.exceptions;
 
 public class EmptyException extends RuntimeException {
   public EmptyException(String message) {
-    super(message + " can not be empty");
+    super(message + " cannot be empty");
   }
 }

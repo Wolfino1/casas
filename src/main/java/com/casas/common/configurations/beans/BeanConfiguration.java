@@ -1,27 +1,13 @@
 package com.casas.common.configurations.beans;
 
 
-import com.casas.casas.domain.ports.in.CategoryServicePort;
-import com.casas.casas.domain.ports.in.CityServicePort;
-import com.casas.casas.domain.ports.in.DepartmentServicePort;
-import com.casas.casas.domain.ports.in.LocationServicePort;
-import com.casas.casas.domain.ports.out.CategoryPersistencePort;
-import com.casas.casas.domain.ports.out.CityPersistencePort;
-import com.casas.casas.domain.ports.out.DepartmentPersistencePort;
-import com.casas.casas.domain.ports.out.LocationPersistencePort;
-import com.casas.casas.domain.usecases.CategoryUseCase;
-import com.casas.casas.domain.usecases.CityUseCase;
-import com.casas.casas.domain.usecases.DepartmentUseCase;
-import com.casas.casas.domain.usecases.LocationUseCase;
-import com.casas.casas.infrastructure.adapters.persistence.mysql.CategoryPersistenceAdapter;
-import com.casas.casas.infrastructure.adapters.persistence.mysql.CityPersistenceAdapter;
-import com.casas.casas.infrastructure.adapters.persistence.mysql.DepartmentPersistenceAdapter;
-import com.casas.casas.infrastructure.adapters.persistence.mysql.LocationPersistenceAdapter;
+import com.casas.casas.application.services.impl.HouseServiceImpl;
+import com.casas.casas.domain.ports.in.*;
+import com.casas.casas.domain.ports.out.*;
+import com.casas.casas.domain.usecases.*;
+import com.casas.casas.infrastructure.adapters.persistence.mysql.*;
 import com.casas.casas.infrastructure.mappers.*;
-import com.casas.casas.infrastructure.repositories.mysql.CategoryRepository;
-import com.casas.casas.infrastructure.repositories.mysql.CityRepository;
-import com.casas.casas.infrastructure.repositories.mysql.DepartmentRepository;
-import com.casas.casas.infrastructure.repositories.mysql.LocationRepository;
+import com.casas.casas.infrastructure.repositories.mysql.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +24,10 @@ public class BeanConfiguration {
     private final CityEntityMapper cityEntityMapper;
     private final DepartmentRepository departmentRepository;
     private final DepartmentEntityMapper departmentEntityMapper;
+    private final HouseEntityMapper houseEntityMapper;
+    private final HouseRepository houseRepository;
+    private final PubStatusRepository pubStatusRepository;
+    private final PubStatusEntityMapper pubStatusEntityMapper;
 
     @Bean
     public CategoryServicePort categoryServicePort() {
@@ -78,6 +68,39 @@ public class BeanConfiguration {
     @Bean
     public CityUseCase cityUseCase() {
         return new CityUseCase(cityPersistencePort(),departmentUseCase());
+    }
+
+    @Bean
+    public HouseServicePort houseServicePort() {
+        return new HouseUseCase(
+                housePersistencePort(),
+                locationUseCase(),
+                categoryUseCase()
+        );
+    }
+
+    @Bean
+    public HousePersistencePort housePersistencePort() {
+        return new HousePersistenceAdapter(houseRepository, houseEntityMapper,pageMapperInfra);
+    }
+
+    @Bean
+    public PubStatusPersistencePort pubStatusPersistencePort() {
+        return new PubStatusPersistenceAdapter(pubStatusRepository, pubStatusEntityMapper);
+    }
+
+    @Bean
+    public PubStatusUseCase pubStatusUseCase() {
+        return new PubStatusUseCase(pubStatusPersistencePort());
+    }
+    @Bean
+    public LocationUseCase locationUseCase() {
+        return new LocationUseCase(locationPersistencePort(),cityUseCase());
+    }
+
+    @Bean
+    public CategoryUseCase categoryUseCase() {
+        return new CategoryUseCase(categoryPersistencePort());
     }
 }
 

@@ -9,5 +9,7 @@ public interface CategoryPersistencePort {
     void save(CategoryModel categoryModel);
     Optional<CategoryModel> getByName(String categoryName);
     PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc);
+    Optional<CategoryModel> findById(Long id);
+
 }
 

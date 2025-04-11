@@ -8,6 +8,7 @@ import com.casas.casas.application.mappers.PageMapperApplication;
 import com.casas.casas.application.services.CategoryService;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
+import com.casas.casas.domain.ports.out.CategoryPersistencePort;
 import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryServicePort categoryServicePort;
     private final CategoryDtoMapper categoryDtoMapper;
+    private final CategoryPersistencePort categoryPersistencePort;
     private final PageMapperApplication pageMapper;
 
     @Override
@@ -35,5 +37,11 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryResponse> content = categoryModelPagedResult.getContent().stream().map(categoryDtoMapper::modelToResponse)
                 .toList();
         return pageMapper.fromPage(content, categoryModelPagedResult);
+    }
+    @Override
+    public Long getIdByName(String name) {
+        return categoryPersistencePort.getByName(name)
+                .map(CategoryModel::getId)
+                .orElseThrow(() -> new RuntimeException("Category not found: " + name));
     }
 }

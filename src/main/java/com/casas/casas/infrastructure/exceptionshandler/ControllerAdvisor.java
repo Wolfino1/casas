@@ -43,4 +43,15 @@ public class ControllerAdvisor {
         return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(),
                 LocalDateTime.now()));
     }
+    @ExceptionHandler(InvalidPaginationException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidPaginationException(InvalidPaginationException exception) {
+        return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(),
+                LocalDateTime.now()));
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
+        return ResponseEntity.badRequest().body(
+                new ExceptionResponse(exception.getMessage(), LocalDateTime.now())
+        );
+    }
 }
