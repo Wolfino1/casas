@@ -9,6 +9,8 @@ public interface CategoryService {
     SaveCategoryResponse save(SaveCategoryRequest request);
 
     PagedResult<CategoryResponse> getCategories(Integer page, Integer size, boolean orderAsc);
+    Long getIdByName(String name);
+
 
 }
 

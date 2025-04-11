@@ -3,7 +3,6 @@ package com.casas.casas.infrastructure.adapters.persistence.mysql;
 import com.casas.casas.domain.model.DepartmentModel;
 import com.casas.casas.domain.ports.out.DepartmentPersistencePort;
 import com.casas.casas.infrastructure.mappers.DepartmentEntityMapper;
-import com.casas.casas.infrastructure.mappers.PageMapperInfra;
 import com.casas.casas.infrastructure.repositories.mysql.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

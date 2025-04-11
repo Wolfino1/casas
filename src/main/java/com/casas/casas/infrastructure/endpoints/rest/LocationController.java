@@ -41,7 +41,8 @@ public class LocationController {
     public ResponseEntity<PagedResult<LocationResponse>> getAllLocationsFilters(@RequestParam Integer page,
                                                                                 @RequestParam Integer size,
                                                                                 @RequestParam(required = false) Long idCity,
+                                                                                @RequestParam(required = false) Long idDepartment,
                                                                                 @RequestParam boolean orderAsc) {
-        return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, idCity, orderAsc));
+        return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, idCity, idDepartment, orderAsc));
     }
 }

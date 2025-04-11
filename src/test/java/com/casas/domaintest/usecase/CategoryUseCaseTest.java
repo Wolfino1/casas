@@ -6,6 +6,7 @@ import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
 import com.casas.casas.domain.usecases.CategoryUseCase;
 import com.casas.casas.domain.utils.page.PagedResult;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +56,7 @@ class CategoryUseCaseTest {
     void get_ShouldReturnPagedCategories() {
 
         CategoryModel category = new CategoryModel(1L, "Category Name", "Description");
-        PagedResult<CategoryModel> pagedResult = new PagedResult<>(List.of(category), 1, 0, 10);
+        PagedResult<CategoryModel> pagedResult = new PagedResult<>(List.of(category), 0, 10, 1);
 
         when(categoryPersistencePort.get(anyInt(), anyInt(), anyBoolean())).thenReturn(pagedResult);
 
@@ -64,5 +65,19 @@ class CategoryUseCaseTest {
         assertFalse(result.getContent().isEmpty());
         assertEquals(1, result.getContent().size());
         assertEquals(category.getId(), result.getContent().get(0).getId());
+    }
+    @Test
+    void getById_WhenExists_ReturnsCategoryModel() {
+        // Arrange
+        Long categoryId = 1L;
+        CategoryModel expectedModel = new CategoryModel(categoryId, "Residencial", "Descripción");
+        when(categoryPersistencePort.findById(categoryId)).thenReturn(Optional.of(expectedModel));
+
+        // Act
+        CategoryModel result = categoryUseCase.getById(categoryId);
+
+        // Assert
+        assertEquals(expectedModel, result);
+        verify(categoryPersistencePort).findById(categoryId);
     }
 }

@@ -4,7 +4,9 @@ import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
+import com.casas.casas.domain.utils.constants.DomainConstants;
 import com.casas.casas.domain.utils.page.PagedResult;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Optional;
 
@@ -25,10 +27,16 @@ public class CategoryUseCase implements CategoryServicePort {
         categoryPersistencePort.save(categoryModel);
     }
 
-
     @Override
     public PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc) {
         return categoryPersistencePort.get(page, size, orderAsc);
+    }
+
+
+    @Override
+    public CategoryModel getById(Long id) {
+        return categoryPersistencePort.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(DomainConstants.CATEGORY_DOES_NOT_EXIST));
     }
 
 }
