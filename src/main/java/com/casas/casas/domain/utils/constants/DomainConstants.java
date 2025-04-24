@@ -14,6 +14,7 @@ public final class DomainConstants {
     public static final String PAGE_SIZE_INVALID = "Page size cannot be less than 0";
     public static final String FIELD_ADDRESS_NULL_MESSAGE ="Field address cannot be null";
     public static final String ADDRESS_ALREADY_EXISTS = "That address is already in use";
+    public static final String HOUSE_DOES_NOT_EXIST = "The house does not exist";
     public static final Long PUB_STATUS_IS_ACTIVE = 2L;
     public static final Long PUB_STATUS_IS_DRAFT = 1L;
     public static final Integer DAYS_TO_ADD = 1;

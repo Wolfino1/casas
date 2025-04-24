@@ -10,4 +10,6 @@ public interface HousePersistencePort {
                                        Integer minPrice, Integer maxPrice, String sortBy, boolean orderAsc);
     boolean existsByAddress(String address);
 
+    HouseModel getById(Long id);
+
 }

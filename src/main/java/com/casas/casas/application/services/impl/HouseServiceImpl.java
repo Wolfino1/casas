@@ -14,6 +14,7 @@ import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,7 @@ public class HouseServiceImpl implements HouseService {
     private final PageMapperApplication pageMapper;
     private final CategoryService categoryService;
     private final LocationService locationService;
+    private final HouseDtoMapper mapper;
 
     @Override
     public SaveHouseResponse save(SaveHouseRequest request) {
@@ -58,6 +60,15 @@ public class HouseServiceImpl implements HouseService {
                 .toList();
 
         return pageMapper.fromPage(content, houseModelPagedResult);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HouseResponse getById(Long id) {
+        // 1) Llamas al domain use case / port para obtener el modelo
+        HouseModel model = houseServicePort.getById(id);
+        // 2) Mapeas el modelo a tu DTO de respuesta
+        return mapper.modelToResponse(model);
     }
 
 }

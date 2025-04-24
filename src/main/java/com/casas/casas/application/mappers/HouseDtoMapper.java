@@ -13,29 +13,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class HouseDtoMapper {
 
+
     @Autowired
     protected LocationServicePort locationServicePort;
 
     public abstract HouseModel requestToModel(SaveHouseRequest saveHouseRequest);
 
-    @Mapping(source = "idLocation", target = "Location", qualifiedByName = "mapLocation")
-    @Mapping(source = "idCategory", target = "Category", qualifiedByName = "mapCategory")
-    @Mapping(source = "price", target = "priceMin")
-    @Mapping(source = "price", target = "priceMax")
+    @Mapping(source = "idCategory", target = "category", qualifiedByName = "mapCategory")
+    @Mapping(source = "idLocation", target = "location", qualifiedByName = "mapLocation")
+    @Mapping(source = "price",      target = "priceMin")
+    @Mapping(source = "price",      target = "priceMax")
     public abstract HouseResponse modelToResponse(HouseModel houseModel);
 
     @Named("mapCategory")
     public String mapCategory(Long idCategory) {
-        if (idCategory == null) return "Desconocido";
-        return String.valueOf(idCategory);
+        return (idCategory == null) ? "Unknown" : String.valueOf(idCategory);
     }
 
     @Named("mapLocation")
     public LocationResponse mapLocation(Long idLocation) {
         if (idLocation == null) return null;
-
-        LocationModel location = locationServicePort.getById(idLocation);
-        return toLocationResponse(location);
+        LocationModel loc = locationServicePort.getById(idLocation);
+        return toLocationResponse(loc);
     }
 
     public LocationResponse toLocationResponse(LocationModel locationModel) {
@@ -66,7 +65,3 @@ public abstract class HouseDtoMapper {
         );
     }
 }
-
-
-
-

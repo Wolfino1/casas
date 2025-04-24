@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     @Operation(summary = "Create category", description = "This method saves an nonexistent category", tags =
             {"Category"}, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description =
@@ -36,7 +38,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(saveCategoryRequest));
     }
 
-    @GetMapping("/")
+    @GetMapping("/get")
     public ResponseEntity<PagedResult<CategoryResponse>> getAllCategories(@RequestParam Integer page, @RequestParam Integer size,
                                                                           @RequestParam boolean orderAsc) {
         return ResponseEntity.ok(categoryService.getCategories(page, size, orderAsc));

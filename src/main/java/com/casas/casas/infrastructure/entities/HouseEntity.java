@@ -36,4 +36,6 @@ public class HouseEntity {
     @ManyToOne(targetEntity = PubStatusEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "pub_status_id")
     private PubStatusEntity pubStatus;
+    @Column(name="seller_id", nullable=false)
+    private Long sellerId;
 }

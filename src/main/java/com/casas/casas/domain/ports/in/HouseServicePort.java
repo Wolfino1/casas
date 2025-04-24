@@ -8,6 +8,6 @@ public interface HouseServicePort {
     PagedResult<HouseModel> getFilters(Integer page, Integer size, Long idLocation, Long idCategory,
                                        Integer numberOfRooms, Integer numberOfBathrooms,
                                        Integer minPrice, Integer maxPrice, String sortBy, boolean orderAsc);
-
+    HouseModel getById(Long id);
 
 }

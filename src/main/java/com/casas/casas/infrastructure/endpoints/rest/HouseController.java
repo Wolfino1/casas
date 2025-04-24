@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name= "House", description = "Controller for Houses")
 public class HouseController {
     private final HouseService houseService;
-
+    @PreAuthorize("hasRole('SELLER')")
     @PostMapping("/")
     @Operation(summary = "Create house", description = "This method saves a house", tags =
             {"House"}, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description =
@@ -51,5 +52,12 @@ public class HouseController {
 
         return ResponseEntity.ok(houseService.getHouseFiltered(
                 page, size, category, numberOfRooms, numberOfBathrooms, minPrice, maxPrice, location, sortBy ,orderAsc));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get house by ID", description = "Returns a single house")
+    public ResponseEntity<HouseResponse> getById(@PathVariable Long id) {
+        HouseResponse house = houseService.getById(id);
+        return ResponseEntity.ok(house);
     }
 }

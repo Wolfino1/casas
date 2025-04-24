@@ -56,4 +56,16 @@ public class HouseUseCase implements HouseServicePort {
         return housePersistencePort.getFilters(page, size, idLocation, idCategory, numberOfRooms,
                 numberOfBathrooms, minPrice, maxPrice, sortBy , orderAsc);
     }
+
+    @Override
+    public HouseModel getById(Long id) {
+        HouseModel house = housePersistencePort.getById(id);
+
+        if (house == null) {
+            throw new EmptyException(DomainConstants.HOUSE_DOES_NOT_EXIST);
+        }
+
+        return house;
+    }
+
 }

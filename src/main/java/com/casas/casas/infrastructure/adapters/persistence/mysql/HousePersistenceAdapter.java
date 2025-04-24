@@ -61,19 +61,16 @@ public class HousePersistenceAdapter implements HousePersistencePort {
         return pageMapperInfra.fromPage(pageResult.map(houseEntityMapper::entityToModel));
     }
 
-
-
-
-
-
-
-
-
-
-
     @Override
     public boolean existsByAddress(String address) {
         return houseRepository.existsByAddress(address);
+    }
+
+    @Override
+    public HouseModel getById(Long id) {
+        return houseRepository.findById(id)
+                .map(houseEntityMapper::entityToModel)
+                .orElse(null);
     }
 }
 

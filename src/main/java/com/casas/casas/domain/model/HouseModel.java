@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class HouseModel {
 
     private Long id;
+    private Long sellerId;
     private String name;
     private String address;
     private String description;
@@ -21,9 +22,10 @@ public class HouseModel {
     private Long idPubStatus;
     private LocalDateTime publishDate;
 
-    public HouseModel(Long id, String name, String address, String description, Long idCategory, int numberOfRooms, int numberOfBathrooms,
+    public HouseModel(Long id, Long sellerId, String name, String address, String description, Long idCategory, int numberOfRooms, int numberOfBathrooms,
                       int price, Long idLocation, LocalDate publishActivationDate, Long idPubStatus, LocalDateTime publishDate){
         this.id = id;
+        this.sellerId = sellerId;
         this.name = name;
         setAddress(address);
         this.description = description;
@@ -32,7 +34,7 @@ public class HouseModel {
         this.numberOfBathrooms = numberOfBathrooms;
         this.price = price;
         this.idLocation = idLocation;
-        this.publishActivationDate = publishActivationDate;
+        setPublishActivationDate (publishActivationDate);
         this.idPubStatus = idPubStatus;
         this.publishDate = publishDate;
     }
@@ -44,6 +46,14 @@ public class HouseModel {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
     }
 
     public String getName() {
@@ -141,7 +151,6 @@ public class HouseModel {
     public void setPublishDate(LocalDateTime publishDate) {
         this.publishDate = publishDate;
     }
-
 
     public LocalDateTime getPublishDate() {
         return publishDate;

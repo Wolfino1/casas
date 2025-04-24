@@ -28,5 +28,4 @@ public interface HouseRepository extends JpaRepository<HouseEntity, Long> {
     @Query("SELECT h FROM HouseEntity h WHERE h.publishActivationDate <= :currentDate")
     Page<HouseEntity> findAllActive(@Param("currentDate") LocalDateTime currentDate, Pageable pageable);
     boolean existsByAddress(String address);
-
 }

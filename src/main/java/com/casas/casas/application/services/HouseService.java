@@ -10,4 +10,6 @@ public interface HouseService {
     PagedResult<HouseResponse> getHouseFiltered (Integer page, Integer size, String category, Integer numberOfRooms,
                                                  Integer numberOfBathrooms,Integer minPrice, Integer maxPrice,
                                                  String location, String sortBy, boolean orderAsc);
+    HouseResponse getById(Long id);
+
 }
