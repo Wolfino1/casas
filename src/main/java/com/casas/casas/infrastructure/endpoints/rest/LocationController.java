@@ -26,7 +26,7 @@ public class LocationController {
 
     @PostMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create Location", description = "This method saves an nonexistent location", tags =
+    @Operation(summary = "Create Location", description = "This method saves a nonexistent location", tags =
             {"Location"}, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description =
             "Creates a new Location", required = true, content = @Content(mediaType = "application/jason",
             schema = @Schema(implementation = SaveLocationResponse.class))), responses = {@ApiResponse(

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     @Operation(summary = "Create category", description = "This method saves an nonexistent category", tags =
             {"Category"}, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description =
