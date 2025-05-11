@@ -32,8 +32,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -140,9 +138,11 @@ public class BeanConfiguration {
         http
                 .securityMatcher("/api/v1/category/**",
                         "/api/v1/department/**",
+                        "/api/v1/city/**",
                         "/api/v1/house/**",
                         "/api/v1/locations/**",
-                        "/api/v1/category")
+                        "/api/v1/category"
+                        )
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->

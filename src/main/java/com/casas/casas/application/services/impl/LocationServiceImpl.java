@@ -34,8 +34,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public PagedResult<LocationResponse> getAllLocationsFilters(Integer page, Integer size, Long idCity, Long idDepartment, boolean orderAsc) {
-        PagedResult<LocationModel> locationModelPagedResult = locationServicePort.getFilters(page, size, idCity, idDepartment, orderAsc);
+    public PagedResult<LocationResponse> getAllLocationsFilters(Integer page, Integer size, Long idCity, Long idDepartment, String search, boolean orderAsc) {
+        PagedResult<LocationModel> locationModelPagedResult = locationServicePort.getFilters(page, size, idCity, idDepartment, search, orderAsc);
         List<LocationResponse> content = locationModelPagedResult.getContent().stream()
                 .map(locationDtoMapper::modelToResponse)
                 .toList();

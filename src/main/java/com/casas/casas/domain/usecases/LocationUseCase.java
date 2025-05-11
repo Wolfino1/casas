@@ -31,8 +31,8 @@ public class LocationUseCase implements LocationServicePort {
     }
 
     @Override
-    public PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, boolean orderAsc) {
-        return locationPersistencePort.getFilters(page, size, idCity, idDepartment, orderAsc);
+    public PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, String search, boolean orderAsc) {
+        return locationPersistencePort.getFilters(page, size, idCity, idDepartment, search, orderAsc);
     }
 
     @Override

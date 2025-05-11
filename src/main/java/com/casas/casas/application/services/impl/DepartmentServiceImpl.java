@@ -1,12 +1,7 @@
 package com.casas.casas.application.services.impl;
-
 import com.casas.casas.application.services.DepartmentService;
-import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.model.DepartmentModel;
-import com.casas.casas.domain.model.LocationModel;
-import com.casas.casas.domain.ports.out.CategoryPersistencePort;
 import com.casas.casas.domain.ports.out.DepartmentPersistencePort;
-import com.casas.casas.domain.ports.out.LocationPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

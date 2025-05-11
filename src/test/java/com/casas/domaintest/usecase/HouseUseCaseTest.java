@@ -44,7 +44,7 @@ class HouseUseCaseTest {
     @BeforeEach
     void setUp() {
         baseModel = new HouseModel(
-                null, "Casa bonita", "Calle 28","Descripción",
+                1L, 1L, "Casa bonita", "Calle 28","Descripción",
                 1L, 3, 2,
                 500000000,locationId,
                 LocalDate.now(),
@@ -67,7 +67,7 @@ class HouseUseCaseTest {
     @Test
     void save_WhenActivationDateIsFuture_SetsPubStatusTo1() {
         HouseModel futureHouse = new HouseModel(
-                null, "Casa bonita", "Calle 28","Descripción",
+                1L, 1L, "Casa bonita", "Calle 28","Descripción",
                 1L, 3, 2,
                 500000000,locationId,
                 LocalDate.now().plusDays(1),

@@ -36,10 +36,4 @@ public class DepartmentController {
         DepartmentResponse response = departmentDtoMapper.modelToResponse(model);
         return ResponseEntity.ok(response);
     }
-
-
-
-
-
-
 }
