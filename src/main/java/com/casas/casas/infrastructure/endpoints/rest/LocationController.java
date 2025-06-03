@@ -48,4 +48,3 @@ public class LocationController {
         return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, idCity, idDepartment, search, orderAsc));
     }
 }
-// npm run test -- --coverage

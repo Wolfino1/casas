@@ -5,9 +5,9 @@ import com.casas.casas.application.dto.response.SaveLocationResponse;
 import com.casas.casas.application.mappers.CityDtoMapper;
 import com.casas.casas.application.services.CityService;
 import com.casas.casas.domain.model.CityModel;
-import com.casas.casas.domain.model.DepartmentModel;
 import com.casas.casas.domain.ports.in.CityServicePort;
 import com.casas.casas.domain.ports.out.CityPersistencePort;
+import com.casas.casas.domain.utils.constants.DomainConstants;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class CityServiceImpl implements CityService {
     @Override
     public CityModel getCityById(Long id) {
         return cityPersistencePort.getByCityById(id)
-                .orElseThrow(() -> new RuntimeException("City not found for id: " + id));
+                .orElseThrow(() -> new RuntimeException(DomainConstants.CITY_DOES_NOT_EXIST));
     }
     @Override
     public List<CityModel> getCitiesByDepartmentId(Long departmentId) {

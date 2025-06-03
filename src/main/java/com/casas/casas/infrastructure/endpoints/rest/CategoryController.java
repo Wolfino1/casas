@@ -5,6 +5,7 @@ import com.casas.casas.application.dto.response.CategoryResponse;
 import com.casas.casas.application.dto.response.SaveCategoryResponse;
 import com.casas.casas.application.services.CategoryService;
 import com.casas.casas.domain.utils.page.PagedResult;
+import com.casas.common.configurations.utils.Constants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     @Operation(summary = "Create category", description = "This method saves an nonexistent category", tags =
             {"Category"}, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description =

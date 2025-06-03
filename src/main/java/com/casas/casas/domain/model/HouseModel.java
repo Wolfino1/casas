@@ -72,9 +72,10 @@ public class HouseModel {
     }
 
     public void setAddress(String address) {
-        if (name == null || name.trim().isEmpty()) {
+        if (address == null || address.trim().isEmpty()) {
             throw new IllegalArgumentException(DomainConstants.FIELD_ADDRESS_NULL_MESSAGE);
         }
+
         this.address = address;
     }
 
@@ -86,7 +87,7 @@ public class HouseModel {
         this.description = description;
     }
 
-    public Long     getIdCategory() {
+    public Long getIdCategory() {
         return idCategory;
     }
 

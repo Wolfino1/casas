@@ -21,7 +21,6 @@
                 "JOIN l.city c " +
                 "JOIN c.department d " +
                 "WHERE LOWER(d.name) = LOWER(:departmentName)")
-        //       "WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :departmentName, '%'))")
         List<LocationEntity> findAllByDepartmentName(@Param("departmentName") String departmentName);
 
 

@@ -51,9 +51,10 @@ public class HouseUseCase implements HouseServicePort {
     }
 
     @Override
-    public PagedResult<HouseModel> getFilters(Integer page, Integer size, Long idLocation, Long idCategory, Integer numberOfRooms,
+    public PagedResult<HouseModel> getFilters(Integer page, Integer size, Long idLocation, Long idCategory,
+                                              String name, Integer numberOfRooms,
                                               Integer numberOfBathrooms, Integer minPrice, Integer maxPrice, String sortBy, boolean orderAsc) {
-        return housePersistencePort.getFilters(page, size, idLocation, idCategory, numberOfRooms,
+        return housePersistencePort.getFilters(page, size, idLocation, idCategory, name, numberOfRooms,
                 numberOfBathrooms, minPrice, maxPrice, sortBy , orderAsc);
     }
 
@@ -68,4 +69,11 @@ public class HouseUseCase implements HouseServicePort {
         return house;
     }
 
+    @Override
+    public PagedResult<HouseModel> getFiltersBySeller(Long sellerId, Integer page, Integer size, Long id, String name, Long idLocation, Long idCategory,
+                                                      Integer minPrice, boolean orderAsc) {
+
+        return housePersistencePort.getFiltersBySeller(sellerId, page, size, id, name, idLocation, idCategory,
+                 minPrice,  orderAsc);
+    }
 }

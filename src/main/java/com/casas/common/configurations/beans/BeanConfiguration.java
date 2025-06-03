@@ -136,13 +136,14 @@ public class BeanConfiguration {
     @Order(1)
     public SecurityFilterChain publicApiChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/v1/category/**",
+                .securityMatcher("/api/v1/category/get",
                         "/api/v1/department/**",
                         "/api/v1/city/**",
                         "/api/v1/house/**",
                         "/api/v1/locations/**",
-                        "/api/v1/category"
-                        )
+                        "/api/v1/house/**",
+                        "/api/v1/house"
+                )
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
@@ -159,8 +160,7 @@ public class BeanConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/v1/house/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/house").hasRole("SELLER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/category/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(),

@@ -9,6 +9,7 @@ import com.casas.casas.application.services.LocationService;
 import com.casas.casas.domain.model.LocationModel;
 import com.casas.casas.domain.ports.in.LocationServicePort;
 import com.casas.casas.domain.ports.out.LocationPersistencePort;
+import com.casas.casas.domain.utils.constants.DomainConstants;
 import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class LocationServiceImpl implements LocationService {
     public Long getIdByName(String name) {
         return locationPersistencePort.findByName(name)
                 .map(LocationModel::getId)
-                .orElseThrow(() -> new RuntimeException("Location not found: " + name));
+                .orElseThrow(() -> new RuntimeException(DomainConstants.LOCATION_DOES_NOT_EXIST));
     }
     @Override
     public Optional<Long> getIdByCityName(String cityName) {
@@ -57,6 +58,15 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Optional<Long> getIdByDepartmentName(String departmentName) {
         return locationServicePort.getIdByDepartmentName(departmentName);
+    }
+
+    @Override
+    public String getNameById(Long idLocation) {
+        LocationModel model = locationServicePort.getById(idLocation);
+        if (model == null) {
+            throw new IllegalArgumentException(DomainConstants.LOCATION_DOES_NOT_EXIST);
+        }
+        return model.getName();
     }
 
 }

@@ -46,6 +46,12 @@ public class CategoryPersistenceAdapter implements CategoryPersistencePort {
         return categoryRepository.findById(id)
                 .map(categoryEntityMapper::entityToModel);
     }
+
+    @Override
+    public Optional<CategoryModel> findByName(String name) {
+        return categoryRepository.findByName(name)
+                .map(categoryEntityMapper::entityToModel);
+    }
 }
 
 

@@ -15,4 +15,5 @@ public interface LocationPersistencePort {
     Optional<LocationModel> findByCityName(String cityName);
     List<LocationModel> findByDepartmentName(String departmentName);
 
+
 }

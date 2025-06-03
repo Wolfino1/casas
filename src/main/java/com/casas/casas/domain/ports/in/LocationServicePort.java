@@ -14,4 +14,7 @@ public interface LocationServicePort {
     Optional<Long> findByCityName(String cityName);
     Optional<Long> getIdByDepartmentName(String departmentName);
     List<Long> getAllIdsByDepartmentName(String departmentName);
+    String getNameById(Long idLocation);
+    Optional<LocationModel> findById(Long idLocation);
+
 }

@@ -13,5 +13,6 @@ public interface LocationService {
     Long getIdByName(String name);
     public Optional<Long> getIdByCityName(String cityName);
     public Optional<Long> getIdByDepartmentName(String departmentName);
+    String getNameById(Long idLocation);
 
 }

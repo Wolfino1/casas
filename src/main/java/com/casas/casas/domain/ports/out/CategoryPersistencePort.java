@@ -10,6 +10,6 @@ public interface CategoryPersistencePort {
     Optional<CategoryModel> getByName(String categoryName);
     PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc);
     Optional<CategoryModel> findById(Long id);
-
+    Optional<CategoryModel> findByName(String name);
 }
 

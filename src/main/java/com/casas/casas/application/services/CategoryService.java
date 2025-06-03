@@ -10,6 +10,8 @@ public interface CategoryService {
 
     PagedResult<CategoryResponse> getCategories(Integer page, Integer size, boolean orderAsc);
     Long getIdByName(String name);
+    String getNameById(Long idCategory);
+
 
 
 }

@@ -1,16 +1,22 @@
 package com.casas.casas.infrastructure.security;
+
+import java.io.IOException;
+import java.util.Collections;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Collections;
+import io.jsonwebtoken.Claims;
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
@@ -18,27 +24,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+    protected void doFilterInternal(
+            HttpServletRequest  request,
+            HttpServletResponse response,
+            FilterChain         filterChain
+    ) throws ServletException, IOException {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
             if (jwtUtil.validateToken(token)) {
-                String username = jwtUtil.extractUsername(token);
+                // Extraemos todos los claims
+                Claims claims = jwtUtil.extractAllClaims(token);
 
-                String role = (String) jwtUtil.extractAllClaims(token).get("role");
+                // Formamos el nombre de rol
+                String roleRaw = claims.get("role", String.class);
+                String authority = roleRaw != null
+                        ? "ROLE_" + roleRaw
+                        : "ROLE_UNKNOWN";
 
-                if (role != null) {
-                    role = "ROLE_" + role;
-                } else {
-                    role = "ROLE_UNKNOWN";
-                }
+                // **Clave**: metemos los Claims como principal
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                claims,  // ← aquí
+                                null,
+                                Collections.singletonList(
+                                        new SimpleGrantedAuthority(authority)
+                                )
+                        );
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList(new SimpleGrantedAuthority(role)));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder
+                        .getContext()
+                        .setAuthentication(auth);
             }
         }
         filterChain.doFilter(request, response);

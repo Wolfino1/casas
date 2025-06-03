@@ -3,6 +3,7 @@ package com.casas.casas.application.services.impl;
 import com.casas.casas.application.dto.request.SaveHouseRequest;
 import com.casas.casas.application.dto.response.HouseResponse;
 import com.casas.casas.application.dto.response.SaveHouseResponse;
+import com.casas.casas.application.dto.response.SellerHouseResponse;
 import com.casas.casas.application.mappers.HouseDtoMapper;
 import com.casas.casas.application.mappers.PageMapperApplication;
 import com.casas.casas.application.services.CategoryService;
@@ -10,11 +11,19 @@ import com.casas.casas.application.services.HouseService;
 import com.casas.casas.application.services.LocationService;
 import com.casas.casas.domain.model.HouseModel;
 import com.casas.casas.domain.ports.in.HouseServicePort;
+import com.casas.casas.domain.ports.out.HousePersistencePort;
+import com.casas.casas.domain.usecases.HouseUseCase;
 import com.casas.casas.domain.utils.page.PagedResult;
+import com.casas.casas.infrastructure.security.JwtUtil;
 import com.casas.common.configurations.utils.Constants;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,14 +37,27 @@ public class HouseServiceImpl implements HouseService {
     private final CategoryService categoryService;
     private final LocationService locationService;
     private final HouseDtoMapper mapper;
+    private final HousePersistencePort housePersistencePort;
+
 
     @Override
-    public SaveHouseResponse save(SaveHouseRequest request) {
-        houseServicePort.save(houseDtoMapper.requestToModel(request));
-        return new SaveHouseResponse(Constants.SAVE_HOUSE_RESPONSE_MESSAGE, LocalDateTime.now());
+    public SaveHouseResponse save(SaveHouseRequest requestDto) {
+        // 1. Mapear DTO a modelo (incluye sellerId)
+        HouseModel model = houseDtoMapper.requestToModel(requestDto);
+
+        // 2. Guardar
+        housePersistencePort.save(model);
+
+        // 3. Responder
+        return new SaveHouseResponse(
+                Constants.SAVE_HOUSE_RESPONSE_MESSAGE,
+                LocalDateTime.now()
+        );
     }
 
-    public PagedResult<HouseResponse> getHouseFiltered(Integer page, Integer size, String category,
+
+
+    public PagedResult<HouseResponse> getHouseFiltered(Integer page, Integer size, String category, String name,
                                                        Integer numberOfRooms, Integer numberOfBathrooms,
                                                        Integer minPrice, Integer maxPrice, String location,
                                                        String sortBy, boolean orderAsc) {
@@ -52,7 +74,7 @@ public class HouseServiceImpl implements HouseService {
         }
 
         PagedResult<HouseModel> houseModelPagedResult = houseServicePort.getFilters(
-                page, size, idLocation, idCategory, numberOfRooms, numberOfBathrooms,
+                page, size, idLocation, idCategory, name, numberOfRooms, numberOfBathrooms,
                 minPrice, maxPrice, sortBy, orderAsc);
 
         List<HouseResponse> content = houseModelPagedResult.getContent().stream()
@@ -65,10 +87,34 @@ public class HouseServiceImpl implements HouseService {
     @Override
     @Transactional(readOnly = true)
     public HouseResponse getById(Long id) {
-        // 1) Llamas al domain use case / port para obtener el modelo
         HouseModel model = houseServicePort.getById(id);
-        // 2) Mapeas el modelo a tu DTO de respuesta
         return mapper.modelToResponse(model);
+    }
+
+    @Override
+    public PagedResult<SellerHouseResponse> getHousesBySellerFiltered(Long sellerId, Integer page, Integer size,
+                                                                      Long id, String name, String category, Integer minPrice,
+                                                                      String location, boolean orderAsc) {
+
+        Long idCategory = (category != null) ? categoryService.getIdByName(category) : null;
+        Long idLocation = null;
+
+        if (location != null) {
+            try {
+                idLocation = locationService.getIdByName(location);
+            } catch (Exception e) {
+                idLocation = locationService.getIdByCityName(location).orElse(
+                        locationService.getIdByDepartmentName(location).orElse(null));
+            }
+        }
+
+        PagedResult<HouseModel> models = houseServicePort.getFiltersBySeller(
+                sellerId, page, size, id, name, idLocation, idCategory, minPrice, orderAsc
+        );
+        List<SellerHouseResponse> dtoList = models.getContent().stream()
+                .map(houseDtoMapper::modelToSellerResponse)
+                .toList();
+        return pageMapper.fromPage(dtoList, models);
     }
 
 }
