@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,8 +24,9 @@ import org.springframework.web.bind.annotation.*;
 public class LocationController {
     private final LocationService locationService;
 
-    @PostMapping("/")
-    @Operation(summary = "Create Location", description = "This method saves an nonexistent location", tags =
+    @PostMapping(path = { "", "/" })
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create Location", description = "This method saves a nonexistent location", tags =
             {"Location"}, requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description =
             "Creates a new Location", required = true, content = @Content(mediaType = "application/jason",
             schema = @Schema(implementation = SaveLocationResponse.class))), responses = {@ApiResponse(
@@ -42,7 +44,8 @@ public class LocationController {
                                                                                 @RequestParam Integer size,
                                                                                 @RequestParam(required = false) Long idCity,
                                                                                 @RequestParam(required = false) Long idDepartment,
+                                                                                @RequestParam(required = false) String search,
                                                                                 @RequestParam boolean orderAsc) {
-        return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, idCity, idDepartment, orderAsc));
+        return ResponseEntity.ok(locationService.getAllLocationsFilters(page, size, idCity, idDepartment, search, orderAsc));
     }
 }

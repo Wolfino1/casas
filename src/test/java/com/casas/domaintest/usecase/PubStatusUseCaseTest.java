@@ -3,6 +3,7 @@ package com.casas.domaintest.usecase;
 import com.casas.casas.domain.model.PubStatusModel;
 import com.casas.casas.domain.ports.out.PubStatusPersistencePort;
 import com.casas.casas.domain.usecases.PubStatusUseCase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,17 +24,31 @@ class PubStatusUseCaseTest {
     @InjectMocks
     private PubStatusUseCase pubStatusUseCase;
 
+    private PubStatusModel pubStatusModel;
+
+    @BeforeEach
+    void setUp() {
+        pubStatusModel = new PubStatusModel();
+    }
+
     @Test
-    void getById_WhenExists_ReturnsPubStatus() {
-        Long id = 1L;
-        PubStatusModel expected = new PubStatusModel();
+    void getById_WhenExists_ReturnsOptional() {
+        when(pubStatusPersistencePort.getPubStatusById(1L)).thenReturn(Optional.of(pubStatusModel));
 
-        when(pubStatusPersistencePort.getPubStatusById(id)).thenReturn(Optional.of(expected));
-
-        Optional<PubStatusModel> result = pubStatusUseCase.getById(id);
+        Optional<PubStatusModel> result = pubStatusUseCase.getById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
-        verify(pubStatusPersistencePort).getPubStatusById(id);
+        assertEquals(pubStatusModel, result.get());
+        verify(pubStatusPersistencePort).getPubStatusById(1L);
+    }
+
+    @Test
+    void getById_WhenNotFound_ReturnsEmpty() {
+        when(pubStatusPersistencePort.getPubStatusById(2L)).thenReturn(Optional.empty());
+
+        Optional<PubStatusModel> result = pubStatusUseCase.getById(2L);
+
+        assertTrue(result.isEmpty());
+        verify(pubStatusPersistencePort).getPubStatusById(2L);
     }
 }

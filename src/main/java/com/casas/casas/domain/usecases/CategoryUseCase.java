@@ -1,6 +1,7 @@
 package com.casas.casas.domain.usecases;
 
 import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
+import com.casas.casas.domain.exceptions.NullException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 public class CategoryUseCase implements CategoryServicePort {
     private final CategoryPersistencePort categoryPersistencePort;
+
 
     public CategoryUseCase(CategoryPersistencePort categoryPersistencePort) {
         this.categoryPersistencePort = categoryPersistencePort;
@@ -37,6 +39,20 @@ public class CategoryUseCase implements CategoryServicePort {
     public CategoryModel getById(Long id) {
         return categoryPersistencePort.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(DomainConstants.CATEGORY_DOES_NOT_EXIST));
+    }
+
+
+    @Override
+    public Long getIdByName(String name) {
+        CategoryModel model = categoryPersistencePort.findByName(name)
+                .orElseThrow(() -> new NullException(DomainConstants.CATEGORY_DOES_NOT_EXIST));
+        return model.getId();
+    }
+
+    @Override
+    public String getNameById(Long idCategory) {
+        CategoryModel model = getById(idCategory);
+        return model.getName();
     }
 
 }

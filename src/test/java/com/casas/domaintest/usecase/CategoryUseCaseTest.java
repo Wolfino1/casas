@@ -1,10 +1,11 @@
 package com.casas.domaintest.usecase;
 
-
 import com.casas.casas.domain.exceptions.CategoryAlreadyExistsException;
+import com.casas.casas.domain.exceptions.NullException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
 import com.casas.casas.domain.usecases.CategoryUseCase;
+import com.casas.casas.domain.utils.constants.DomainConstants;
 import com.casas.casas.domain.utils.page.PagedResult;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,55 +30,83 @@ class CategoryUseCaseTest {
     @InjectMocks
     private CategoryUseCase categoryUseCase;
 
-    private CategoryModel category;
+    private CategoryModel baseCategory;
 
     @BeforeEach
     void setUp() {
-        category = new CategoryModel(1L, "Figuras", "Figuras coleccionables");
+        baseCategory = new CategoryModel(1L, "Residencial", "Descripción");
     }
 
     @Test
-    void save_ShouldSaveCategory_WhenCategoryDoesNotExist() {
-        when(categoryPersistencePort.getByName(category.getName())).thenReturn(Optional.empty()); // Cambio aquí
+    void save_WhenNameAlreadyExists_ThrowsCategoryAlreadyExistsException() {
+        when(categoryPersistencePort.getByName("Residencial"))
+                .thenReturn(Optional.of(baseCategory));
 
-        categoryUseCase.save(category);
-
-        verify(categoryPersistencePort, times(1)).save(category);
+        assertThrows(
+                CategoryAlreadyExistsException.class,
+                () -> categoryUseCase.save(baseCategory)
+        );
+        verify(categoryPersistencePort, never()).save(any());
     }
 
     @Test
-    void save_ShouldThrowException_WhenCategoryAlreadyExists() {
-        when(categoryPersistencePort.getByName(category.getName())).thenReturn(Optional.of(category));
+    void save_WhenNameDoesNotExist_SavesSuccessfully() {
+        when(categoryPersistencePort.getByName("Residencial"))
+                .thenReturn(Optional.empty());
 
-        assertThrows(CategoryAlreadyExistsException.class, () -> categoryUseCase.save(category));
+        assertDoesNotThrow(() -> categoryUseCase.save(baseCategory));
+        verify(categoryPersistencePort).save(baseCategory);
     }
 
     @Test
-    void get_ShouldReturnPagedCategories() {
-
-        CategoryModel category = new CategoryModel(1L, "Category Name", "Description");
-        PagedResult<CategoryModel> pagedResult = new PagedResult<>(List.of(category), 0, 10, 1);
-
-        when(categoryPersistencePort.get(anyInt(), anyInt(), anyBoolean())).thenReturn(pagedResult);
+    void get_DelegatesToPersistencePort() {
+        PagedResult<CategoryModel> expected = new PagedResult<>(List.of(baseCategory), 1, 1, 10);
+        when(categoryPersistencePort.get(0, 10, true)).thenReturn(expected);
 
         PagedResult<CategoryModel> result = categoryUseCase.get(0, 10, true);
 
-        assertFalse(result.getContent().isEmpty());
-        assertEquals(1, result.getContent().size());
-        assertEquals(category.getId(), result.getContent().get(0).getId());
+        assertEquals(expected, result);
+        verify(categoryPersistencePort).get(0, 10, true);
     }
+
     @Test
     void getById_WhenExists_ReturnsCategoryModel() {
-        // Arrange
-        Long categoryId = 1L;
-        CategoryModel expectedModel = new CategoryModel(categoryId, "Residencial", "Descripción");
-        when(categoryPersistencePort.findById(categoryId)).thenReturn(Optional.of(expectedModel));
+        when(categoryPersistencePort.findById(1L)).thenReturn(Optional.of(baseCategory));
 
-        // Act
-        CategoryModel result = categoryUseCase.getById(categoryId);
+        CategoryModel result = categoryUseCase.getById(1L);
 
-        // Assert
-        assertEquals(expectedModel, result);
-        verify(categoryPersistencePort).findById(categoryId);
+        assertEquals(baseCategory, result);
+        verify(categoryPersistencePort).findById(1L);
+    }
+
+    @Test
+    void getById_WhenNotFound_ThrowsEntityNotFoundException() {
+        when(categoryPersistencePort.findById(99L)).thenReturn(Optional.empty());
+
+        EntityNotFoundException ex = assertThrows(
+                EntityNotFoundException.class,
+                () -> categoryUseCase.getById(99L)
+        );
+        assertEquals(DomainConstants.CATEGORY_DOES_NOT_EXIST, ex.getMessage());
+    }
+
+    @Test
+    void getIdByName_WhenExists_ReturnsId() {
+        when(categoryPersistencePort.findByName("Residencial"))
+                .thenReturn(Optional.of(baseCategory));
+
+        Long id = categoryUseCase.getIdByName("Residencial");
+
+        assertEquals(1L, id);
+    }
+
+    @Test
+    void getNameById_ReturnsName_WhenExists() {
+        when(categoryPersistencePort.findById(1L)).thenReturn(Optional.of(baseCategory));
+
+        String name = categoryUseCase.getNameById(1L);
+
+        assertEquals("Residencial", name);
+        verify(categoryPersistencePort).findById(1L);
     }
 }

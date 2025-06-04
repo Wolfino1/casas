@@ -3,6 +3,7 @@ package com.casas.domaintest.usecase;
 import com.casas.casas.domain.model.DepartmentModel;
 import com.casas.casas.domain.ports.out.DepartmentPersistencePort;
 import com.casas.casas.domain.usecases.DepartmentUseCase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,17 +24,33 @@ class DepartmentUseCaseTest {
     @InjectMocks
     private DepartmentUseCase departmentUseCase;
 
-    @Test
-    void getById_WhenExists_ReturnsDepartment() {
-        Long id = 1L;
-        DepartmentModel expected = new DepartmentModel(id, "Santander", "Tierra de hormigas culonas");
-        when(departmentPersistencePort.getByDepartmentById(id)).thenReturn(Optional.of(expected));
+    private DepartmentModel departmentModel;
 
-        Optional<DepartmentModel> result = departmentUseCase.getById(id);
+    @BeforeEach
+    void setUp() {
+        departmentModel = new DepartmentModel(1L, "Santander",":D");
+    }
+
+    @Test
+    void getById_WhenExists_ReturnsOptional() {
+        when(departmentPersistencePort.getByDepartmentById(1L)).thenReturn(Optional.of(departmentModel));
+
+        Optional<DepartmentModel> result = departmentUseCase.getById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
-        verify(departmentPersistencePort).getByDepartmentById(id);
+        assertEquals(departmentModel, result.get());
+        verify(departmentPersistencePort).getByDepartmentById(1L);
+    }
+
+    @Test
+    void getById_WhenNotFound_ReturnsEmpty() {
+        when(departmentPersistencePort.getByDepartmentById(2L)).thenReturn(Optional.empty());
+
+        Optional<DepartmentModel> result = departmentUseCase.getById(2L);
+
+        assertTrue(result.isEmpty());
+        verify(departmentPersistencePort).getByDepartmentById(2L);
     }
 }
+
 

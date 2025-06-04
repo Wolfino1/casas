@@ -2,7 +2,10 @@ package com.casas.casas.application.mappers;
 
 import com.casas.casas.application.dto.request.SaveHouseRequest;
 import com.casas.casas.application.dto.response.*;
+import com.casas.casas.application.services.CategoryService;
+import com.casas.casas.application.services.LocationService;
 import com.casas.casas.domain.model.*;
+import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.in.LocationServicePort;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,28 +17,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class HouseDtoMapper {
 
     @Autowired
+    protected CategoryService categoryService;
+
+    @Autowired
+    protected LocationService locationService;
+
+    @Autowired
     protected LocationServicePort locationServicePort;
 
+    @Mapping(source = "idCategory", target = "idCategory")
+    @Mapping(source = "idLocation", target = "idLocation")
+    @Mapping(source = "publishActivationDate", target = "publishActivationDate")
     public abstract HouseModel requestToModel(SaveHouseRequest saveHouseRequest);
 
-    @Mapping(source = "idLocation", target = "Location", qualifiedByName = "mapLocation")
-    @Mapping(source = "idCategory", target = "Category", qualifiedByName = "mapCategory")
-    @Mapping(source = "price", target = "priceMin")
-    @Mapping(source = "price", target = "priceMax")
+    @Mapping(source = "name",       target = "name")
+    @Mapping(source = "idCategory", target = "category", qualifiedByName = "mapCategory")
+    @Mapping(source = "idLocation", target = "location", qualifiedByName = "mapLocation")
+    @Mapping(source = "price",      target = "priceMin")
+    @Mapping(source = "price",      target = "priceMax")
     public abstract HouseResponse modelToResponse(HouseModel houseModel);
 
     @Named("mapCategory")
     public String mapCategory(Long idCategory) {
-        if (idCategory == null) return "Desconocido";
-        return String.valueOf(idCategory);
+        return (idCategory == null) ? "Unknown" : String.valueOf(idCategory);
     }
 
     @Named("mapLocation")
     public LocationResponse mapLocation(Long idLocation) {
         if (idLocation == null) return null;
-
-        LocationModel location = locationServicePort.getById(idLocation);
-        return toLocationResponse(location);
+        LocationModel loc = locationServicePort.getById(idLocation);
+        return toLocationResponse(loc);
     }
 
     public LocationResponse toLocationResponse(LocationModel locationModel) {
@@ -65,8 +76,17 @@ public abstract class HouseDtoMapper {
                 departmentModel.getDescription()
         );
     }
+
+    public SellerHouseResponse modelToSellerResponse(HouseModel model) {
+        String categoryName = categoryService.getNameById(model.getIdCategory());
+        String locationName = locationService.getNameById(model.getIdLocation());
+
+        return new SellerHouseResponse(
+                model.getId(),
+                model.getName(),
+                categoryName,
+                model.getPrice(),
+                locationName
+        );
+    }
 }
-
-
-
-

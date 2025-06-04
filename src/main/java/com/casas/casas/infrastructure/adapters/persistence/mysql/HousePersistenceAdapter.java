@@ -34,7 +34,7 @@ public class HousePersistenceAdapter implements HousePersistencePort {
     }
 
     @Override
-    public PagedResult<HouseModel> getFilters(Integer page, Integer size, Long idLocation, Long idCategory, Integer numberOfRooms,
+    public PagedResult<HouseModel> getFilters(Integer page, Integer size, Long idLocation, Long idCategory, String name,Integer numberOfRooms,
                                               Integer numberOfBathrooms, Integer minPrice, Integer maxPrice, String sortBy, boolean orderAsc) {
 
         if (page < 0) {
@@ -52,7 +52,7 @@ public class HousePersistenceAdapter implements HousePersistencePort {
         Page<HouseEntity> pageResult;
 
         if (idLocation != null || idCategory != null || numberOfRooms != null || numberOfBathrooms != null || minPrice != null || maxPrice != null) {
-            pageResult = houseRepository.findWithFilters(idLocation, idCategory, numberOfRooms,
+            pageResult = houseRepository.findWithFilters(idLocation, idCategory, name, numberOfRooms,
                     numberOfBathrooms, minPrice, maxPrice, LocalDateTime.now(), pagination);}
         else {
             pageResult = houseRepository.findAllActive(LocalDateTime.now(), pagination);
@@ -61,19 +61,42 @@ public class HousePersistenceAdapter implements HousePersistencePort {
         return pageMapperInfra.fromPage(pageResult.map(houseEntityMapper::entityToModel));
     }
 
-
-
-
-
-
-
-
-
-
-
     @Override
     public boolean existsByAddress(String address) {
         return houseRepository.existsByAddress(address);
     }
+
+    @Override
+    public HouseModel getById(Long id) {
+        return houseRepository.findById(id)
+                .map(houseEntityMapper::entityToModel)
+                .orElse(null);
+    }
+
+    @Override
+    public PagedResult<HouseModel> getFiltersBySeller(Long sellerId, Integer page, Integer size, Long id, String name, Long idLocation, Long idCategory,Integer minPrice, boolean orderAsc) {
+
+        if (page < 0) throw new InvalidPaginationException(DomainConstants.PAGE_NUMBER_INVALID);
+        if (size <= 0) throw new InvalidPaginationException(DomainConstants.PAGE_SIZE_INVALID);
+
+        Pageable pagination = orderAsc
+                ? PageRequest.of(page, size, Sort.by("id").ascending())
+                : PageRequest.of(page, size, Sort.by("id").descending());
+
+
+        Page<HouseEntity> pageResult;
+
+        if (id != null || idLocation != null || idCategory != null || minPrice != null || name != null) {
+            pageResult = houseRepository.findWithFiltersBySeller(
+                    sellerId, id, idLocation, idCategory, minPrice, name, LocalDateTime.now(), pagination
+            );
+        } else {
+            pageResult = houseRepository.findAllActiveBySeller(sellerId, LocalDateTime.now(), pagination);
+        }
+
+
+        return pageMapperInfra.fromPage(pageResult.map(houseEntityMapper::entityToModel));
+    }
+
 }
 

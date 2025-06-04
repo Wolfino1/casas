@@ -8,10 +8,13 @@ import java.util.Optional;
 
 public interface LocationServicePort {
     void save(LocationModel locationModel);
-    PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, boolean orderAsc);
+    PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, String search, boolean orderAsc);
     Long getIdByName(String name);
     LocationModel getById(Long id);
     Optional<Long> findByCityName(String cityName);
     Optional<Long> getIdByDepartmentName(String departmentName);
     List<Long> getAllIdsByDepartmentName(String departmentName);
+    String getNameById(Long idLocation);
+    Optional<LocationModel> findById(Long idLocation);
+
 }

@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,6 +24,14 @@ public class DepartmentPersistenceAdapter implements DepartmentPersistencePort {
     public Optional<DepartmentModel> getByDepartmentById(Long id) {
         return departmentRepository.findById(id)
                 .map(departmentEntityMapper::entityToModel);
+    }
+
+    @Override
+    public List<DepartmentModel> findAll() {
+        return departmentRepository.findAll()
+                .stream()
+                .map(departmentEntityMapper::entityToModel)
+                .collect(Collectors.toList());
     }
 
     @Override

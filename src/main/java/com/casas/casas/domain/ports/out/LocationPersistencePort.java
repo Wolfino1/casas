@@ -9,10 +9,11 @@ import java.util.Optional;
 
 public interface LocationPersistencePort {
     void save(LocationModel locationModel);
-    PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, boolean orderAsc);
+    PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, String search, boolean orderAsc);
     Optional<LocationModel> findById(Long id);
     Optional<LocationModel> findByName(String name);
     Optional<LocationModel> findByCityName(String cityName);
     List<LocationModel> findByDepartmentName(String departmentName);
+
 
 }

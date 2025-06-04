@@ -5,6 +5,7 @@ import com.casas.casas.domain.model.CityModel;
 import com.casas.casas.domain.model.DepartmentModel;
 import com.casas.casas.domain.ports.in.CityServicePort;
 import com.casas.casas.domain.ports.out.CityPersistencePort;
+import com.casas.casas.domain.utils.constants.DomainConstants;
 
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class CityUseCase implements CityServicePort {
     public void save(CityModel cityModel) {
         Optional<DepartmentModel> departmentModel = departmentUseCase.getById(cityModel.getIdDepartment());
         if (departmentModel.isEmpty()) {
-            throw new EmptyException("Department not found");
+            throw new EmptyException(DomainConstants.DEPARTMENT_DOES_NOT_EXIST);
         }
         cityModel.setDepartment(departmentModel.get());
         cityPersistencePort.save(cityModel);

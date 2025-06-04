@@ -7,4 +7,8 @@ public interface CategoryServicePort {
     void save(CategoryModel categoryModel);
     PagedResult<CategoryModel> get(Integer page, Integer size, boolean orderAsc);
     CategoryModel getById(Long id);
+    String getNameById(Long idCategory);
+    Long getIdByName(String name);
+
+
 }

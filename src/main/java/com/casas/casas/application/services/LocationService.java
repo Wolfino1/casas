@@ -9,9 +9,10 @@ import java.util.Optional;
 
 public interface LocationService {
     SaveLocationResponse save(SaveLocationRequest request);
-    PagedResult<LocationResponse> getAllLocationsFilters(Integer page, Integer size, Long idCity, Long idDepartment, boolean orderAsc);
+    PagedResult<LocationResponse> getAllLocationsFilters(Integer page, Integer size, Long idCity, Long idDepartment, String search, boolean orderAsc);
     Long getIdByName(String name);
     public Optional<Long> getIdByCityName(String cityName);
     public Optional<Long> getIdByDepartmentName(String departmentName);
+    String getNameById(Long idLocation);
 
 }

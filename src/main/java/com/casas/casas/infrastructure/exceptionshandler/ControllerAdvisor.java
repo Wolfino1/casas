@@ -54,4 +54,9 @@ public class ControllerAdvisor {
                 new ExceptionResponse(exception.getMessage(), LocalDateTime.now())
         );
     }
+    @ExceptionHandler(ListingDateExceedTimeException.class)
+    public ResponseEntity<ExceptionResponse> handleListingDateExceedTimeException(ListingDateExceedTimeException exception) {
+        return ResponseEntity.badRequest().body(new ExceptionResponse(exception.getMessage(),
+                LocalDateTime.now()));
+    }
 }

@@ -34,14 +34,16 @@ public class LocationPersistenceAdapter implements LocationPersistencePort {
     }
 
     @Override
-    public PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, boolean orderAsc) {
+    public PagedResult<LocationModel> getFilters(Integer page, Integer size, Long idCity, Long idDepartment, String search, boolean orderAsc) {
         Pageable pagination = orderAsc
                 ? PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).ascending())
                 : PageRequest.of(page, size, Sort.by(Constants.PAGEABLE_FIELD_NAME).descending());
 
         Page<LocationEntity> pageResult;
 
-        if (idCity != null) {
+        if (search != null && !search.trim().isEmpty()) {
+            pageResult = locationRepository.searchByText(search, pagination);
+        } else if (idCity != null) {
             pageResult = locationRepository.findByCityId(idCity, pagination);
         } else if (idDepartment != null) {
             pageResult = locationRepository.findByCity_Department_Id(idDepartment, pagination);
@@ -51,6 +53,7 @@ public class LocationPersistenceAdapter implements LocationPersistencePort {
 
         return pageMapperInfra.fromPage(pageResult.map(locationEntityMapper::entityToModel));
     }
+
 
     @Override
     public Optional<LocationModel> findById(Long id) {

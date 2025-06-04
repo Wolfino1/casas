@@ -9,6 +9,7 @@ import com.casas.casas.application.services.CategoryService;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.ports.in.CategoryServicePort;
 import com.casas.casas.domain.ports.out.CategoryPersistencePort;
+import com.casas.casas.domain.utils.constants.DomainConstants;
 import com.casas.casas.domain.utils.page.PagedResult;
 import com.casas.common.configurations.utils.Constants;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,14 @@ public class CategoryServiceImpl implements CategoryService {
     public Long getIdByName(String name) {
         return categoryPersistencePort.getByName(name)
                 .map(CategoryModel::getId)
-                .orElseThrow(() -> new RuntimeException("Category not found: " + name));
+                .orElseThrow(() -> new RuntimeException(DomainConstants.CATEGORY_DOES_NOT_EXIST));
+    }
+    @Override
+    public String getNameById(Long idCategory) {
+        CategoryModel model = categoryServicePort.getById(idCategory);
+        if (model == null) {
+            throw new IllegalArgumentException(DomainConstants.CATEGORY_DOES_NOT_EXIST);
+        }
+        return model.getName();
     }
 }
