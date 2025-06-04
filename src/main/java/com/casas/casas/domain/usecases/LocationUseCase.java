@@ -91,5 +91,4 @@ public class LocationUseCase implements LocationServicePort {
     public Optional<LocationModel> findById(Long idLocation) {
         return locationPersistencePort.findById(idLocation);
     }
-
 }

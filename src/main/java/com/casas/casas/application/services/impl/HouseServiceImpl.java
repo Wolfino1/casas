@@ -12,17 +12,11 @@ import com.casas.casas.application.services.LocationService;
 import com.casas.casas.domain.model.HouseModel;
 import com.casas.casas.domain.ports.in.HouseServicePort;
 import com.casas.casas.domain.ports.out.HousePersistencePort;
-import com.casas.casas.domain.usecases.HouseUseCase;
 import com.casas.casas.domain.utils.page.PagedResult;
-import com.casas.casas.infrastructure.security.JwtUtil;
 import com.casas.common.configurations.utils.Constants;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import io.jsonwebtoken.Claims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 import java.time.LocalDateTime;
@@ -41,21 +35,10 @@ public class HouseServiceImpl implements HouseService {
 
 
     @Override
-    public SaveHouseResponse save(SaveHouseRequest requestDto) {
-        // 1. Mapear DTO a modelo (incluye sellerId)
-        HouseModel model = houseDtoMapper.requestToModel(requestDto);
-
-        // 2. Guardar
-        housePersistencePort.save(model);
-
-        // 3. Responder
-        return new SaveHouseResponse(
-                Constants.SAVE_HOUSE_RESPONSE_MESSAGE,
-                LocalDateTime.now()
-        );
+    public SaveHouseResponse save(HouseModel model) {
+        houseServicePort.save(model);
+        return new SaveHouseResponse(Constants.SAVE_HOUSE_RESPONSE_MESSAGE, LocalDateTime.now());
     }
-
-
 
     public PagedResult<HouseResponse> getHouseFiltered(Integer page, Integer size, String category, String name,
                                                        Integer numberOfRooms, Integer numberOfBathrooms,

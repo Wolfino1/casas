@@ -9,7 +9,7 @@ public final class DomainConstants {
     public static final String FIELD_NAME_EMPTY_MESSAGE = "Field name cannot be empty";
     public static final String FIELD_DESCRIPTION_NULL_MESSAGE = "Field description cannot be empty";
     public static final String FIELD_DESCRIPTION_EMPTY_MESSAGE = "Field description cannot be empty";
-    public static final String LISTING_DATE_IS_IN_MORE_THAN_ONE_MONTH = "listing date must be in less than a month";
+    public static final String LISTING_DATE_IS_IN_MORE_THAN_ONE_MONTH = "Activation date must be in less than a month";
     public static final String CATEGORY_DOES_NOT_EXIST = "Category not found";
     public static final String LOCATION_DOES_NOT_EXIST = "Location not found";
     public static final String PAGE_NUMBER_INVALID = "Page number cannot be less than 0";

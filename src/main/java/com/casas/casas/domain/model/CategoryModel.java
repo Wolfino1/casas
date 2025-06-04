@@ -60,5 +60,4 @@ public class CategoryModel {
         }
         this.description = description;
     }
-
 }

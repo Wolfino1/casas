@@ -11,6 +11,5 @@ public record SaveHouseRequest(
         int numberOfBathrooms,
         int price,
         Long idLocation,
-        LocalDate publishActivationDate,
-        Long sellerId
+        LocalDate publishActivationDate
 ) { }

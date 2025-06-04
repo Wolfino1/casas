@@ -25,7 +25,6 @@ public abstract class HouseDtoMapper {
     @Autowired
     protected LocationServicePort locationServicePort;
 
-    @Mapping(source = "sellerId", target = "sellerId")
     @Mapping(source = "idCategory", target = "idCategory")
     @Mapping(source = "idLocation", target = "idLocation")
     @Mapping(source = "publishActivationDate", target = "publishActivationDate")

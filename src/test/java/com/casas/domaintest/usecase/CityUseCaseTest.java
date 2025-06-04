@@ -6,6 +6,8 @@ import com.casas.casas.domain.model.DepartmentModel;
 import com.casas.casas.domain.ports.out.CityPersistencePort;
 import com.casas.casas.domain.usecases.CityUseCase;
 import com.casas.casas.domain.usecases.DepartmentUseCase;
+import com.casas.casas.domain.utils.constants.DomainConstants;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,29 +31,56 @@ class CityUseCaseTest {
     @InjectMocks
     private CityUseCase cityUseCase;
 
-    private final Long departmentId = 1L;
+    private DepartmentModel departmentModel;
+    private CityModel cityModel;
 
-    @Test
-    void save_WhenDepartmentExists_SavesCity() {
-        CityModel cityModel = new CityModel(1L, "Bucaramanga", "Ciudad bonita", departmentId, null);
-        DepartmentModel departmentModel = new DepartmentModel(departmentId, "Santander", "Región cafetera");
-
-        when(departmentUseCase.getById(departmentId)).thenReturn(Optional.of(departmentModel));
-
-        cityUseCase.save(cityModel);
-
-        assertEquals(departmentModel, cityModel.getDepartment());
-        verify(cityPersistencePort).save(cityModel);
+    @BeforeEach
+    void setUp() {
+        departmentModel = new DepartmentModel(1L,"Santander",":D");
+        cityModel = new CityModel(1L, "Bucaramanga", ":D",1L, null);
     }
 
     @Test
-    void getById_WhenExists_ReturnsCityModel() {
-        CityModel expected = new CityModel(1L, "Giron", "Colonial", departmentId, null);
-        when(cityPersistencePort.getByCityById(1L)).thenReturn(Optional.of(expected));
+    void save_validCity_savesSuccessfully() {
+        when(departmentUseCase.getById(1L)).thenReturn(Optional.of(departmentModel));
+
+        assertDoesNotThrow(() -> cityUseCase.save(cityModel));
+
+        verify(cityPersistencePort).save(cityModel);
+        assertSame(departmentModel, cityModel.getDepartment());
+    }
+
+    @Test
+    void save_invalidDepartment_throwsException() {
+        when(departmentUseCase.getById(1L)).thenReturn(Optional.empty());
+
+        EmptyException ex = assertThrows(
+                EmptyException.class,
+                () -> cityUseCase.save(cityModel)
+        );
+        assertEquals(DomainConstants.DEPARTMENT_DOES_NOT_EXIST, ex.getMessage());
+
+        verify(cityPersistencePort, never()).save(any());
+    }
+
+    @Test
+    void getById_WhenExists_ReturnsOptional() {
+        when(cityPersistencePort.getByCityById(1L)).thenReturn(Optional.of(cityModel));
 
         Optional<CityModel> result = cityUseCase.getById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals(expected, result.get());
+        assertEquals(cityModel, result.get());
+        verify(cityPersistencePort).getByCityById(1L);
+    }
+
+    @Test
+    void getById_WhenNotFound_ReturnsEmpty() {
+        when(cityPersistencePort.getByCityById(2L)).thenReturn(Optional.empty());
+
+        Optional<CityModel> result = cityUseCase.getById(2L);
+
+        assertTrue(result.isEmpty());
+        verify(cityPersistencePort).getByCityById(2L);
     }
 }

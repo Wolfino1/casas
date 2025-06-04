@@ -4,10 +4,11 @@ import com.casas.casas.application.dto.request.SaveHouseRequest;
 import com.casas.casas.application.dto.response.HouseResponse;
 import com.casas.casas.application.dto.response.SaveHouseResponse;
 import com.casas.casas.application.dto.response.SellerHouseResponse;
+import com.casas.casas.domain.model.HouseModel;
 import com.casas.casas.domain.utils.page.PagedResult;
 
 public interface HouseService {
-    SaveHouseResponse save(SaveHouseRequest request);
+    SaveHouseResponse save(HouseModel model);
     PagedResult<HouseResponse> getHouseFiltered (Integer page, Integer size, String category, String name,
                                                  Integer numberOfRooms,
                                                  Integer numberOfBathrooms,Integer minPrice, Integer maxPrice,

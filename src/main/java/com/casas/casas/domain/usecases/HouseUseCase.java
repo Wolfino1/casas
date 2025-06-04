@@ -1,6 +1,7 @@
 package com.casas.casas.domain.usecases;
 
 import com.casas.casas.domain.exceptions.EmptyException;
+import com.casas.casas.domain.exceptions.ListingDateExceedTimeException;
 import com.casas.casas.domain.model.CategoryModel;
 import com.casas.casas.domain.model.HouseModel;
 import com.casas.casas.domain.model.LocationModel;
@@ -40,8 +41,15 @@ public class HouseUseCase implements HouseServicePort {
         if (housePersistencePort.existsByAddress(houseModel.getAddress())) {
             throw new IllegalArgumentException(DomainConstants.ADDRESS_ALREADY_EXISTS);
         }
+        LocalDate limit = LocalDate.now().plusMonths(DomainConstants.MONTHS_TO_ADD);
         if (houseModel.getPublishActivationDate() != null &&
-                houseModel.getPublishActivationDate().isBefore(LocalDate.now().plusDays(DomainConstants.DAYS_TO_ADD))) {
+                houseModel.getPublishActivationDate().isAfter(limit)) {
+            throw new ListingDateExceedTimeException(
+                    DomainConstants.LISTING_DATE_IS_IN_MORE_THAN_ONE_MONTH
+            );
+        }
+        if (houseModel.getPublishActivationDate() != null &&
+            houseModel.getPublishActivationDate().isBefore(LocalDate.now())) {
             houseModel.setIdPubStatus(DomainConstants.PUB_STATUS_IS_ACTIVE);
         } else {
             houseModel.setIdPubStatus(DomainConstants.PUB_STATUS_IS_DRAFT);

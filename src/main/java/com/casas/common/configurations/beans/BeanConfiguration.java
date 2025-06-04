@@ -139,8 +139,7 @@ public class BeanConfiguration {
                 .securityMatcher("/api/v1/category/get",
                         "/api/v1/department/**",
                         "/api/v1/city/**",
-                        "/api/v1/house/**",
-                        "/api/v1/locations/**",
+                        "/api/v1/locations/filters",
                         "/api/v1/house/**",
                         "/api/v1/house"
                 )
@@ -160,7 +159,9 @@ public class BeanConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/v1/locations/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/category/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/house/**").hasRole("SELLER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(),

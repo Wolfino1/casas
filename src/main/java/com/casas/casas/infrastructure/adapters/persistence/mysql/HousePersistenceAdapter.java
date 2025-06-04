@@ -31,7 +31,6 @@ public class HousePersistenceAdapter implements HousePersistencePort {
     public void save(HouseModel houseModel) {
             HouseEntity houseEntity = houseEntityMapper.modelToEntity(houseModel);
             houseRepository.save(houseEntity);
-
     }
 
     @Override
