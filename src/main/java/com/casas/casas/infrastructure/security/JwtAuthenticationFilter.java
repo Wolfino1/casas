@@ -33,19 +33,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             if (jwtUtil.validateToken(token)) {
-                // Extraemos todos los claims
                 Claims claims = jwtUtil.extractAllClaims(token);
 
-                // Formamos el nombre de rol
                 String roleRaw = claims.get("role", String.class);
                 String authority = roleRaw != null
                         ? "ROLE_" + roleRaw
                         : "ROLE_UNKNOWN";
 
-                // **Clave**: metemos los Claims como principal
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                claims,  // ← aquí
+                                claims,
                                 null,
                                 Collections.singletonList(
                                         new SimpleGrantedAuthority(authority)
